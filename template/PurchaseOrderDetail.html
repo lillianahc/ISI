@@ -1,0 +1,302 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Purchase Order Detail</title>
+<link rel="stylesheet" href="assets/css/reset.css"/>
+<link rel="stylesheet" href="assets/css/bootstrap.css"/>
+<link rel="stylesheet" href="assets/css/bootstrap-theme.css"/>
+<script src="assets/js/jquery-1.11.0.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+
+</head>
+{literal} 
+<style>
+
+/*--------common---------*/
+#header input { color:#2154a8; font-size:14px; margin:20px 10px 0 0; }
+#banner { width: 1000px; height: 141px; margin: 0 auto; padding:0 12px; text-align:right;
+ background: url(assets/images/banner.png) no-repeat; }
+#home{ cursor:pointer;}
+#user { margin:20px 10px 0 0; cursor:pointer; }
+#user input { margin:0;  padding-right:0;}
+#pw{ background:#CCC; position:relative; float:left; top:40px; left:260px; display:none;}
+#pw input { color:#333; margin:0; padding:5px;}
+.bold{ font-weight:bold; }
+
+#container { width: 1000px; min-height: 1515px; margin: 0 auto; padding:0 12px;
+ background: url(assets/images/container.png) repeat-y; }
+
+#footer { width: 1000px; height: 80px; margin: 0 auto; padding:0 12px;
+ background: url(assets/images/footer.png) repeat-y; }
+#footer p{ color:#666; font-size:12px; text-align:center; margin:20px 0;}
+
+#searchBackground { width:auto; height:44px; background:url(assets/images/search.png); }
+#searchBar { width:700px; height:44px; margin:0 auto;}
+#searchBar > div { float:left;}
+
+.vendor { display:none;}
+
+/*------container size------*/
+#container { min-height:950px; padding:10px 65px; }
+#tracking{ min-height:950px; }
+ 
+/*----------table------------*/
+#container table tr td{ vertical-align:middle; }
+#container table tr .qty{ text-align:center; padding-right:40px}
+#container table tr .productname{ padding-right:70px; height:55px;}
+
+/*----------paging------------*/
+#paging div{ text-align: center; }
+
+/*-----------location------------*/
+#location {margin:10px 0 15px 0}
+#location a { color:#3399ff; text-decoration:underline; }
+ 
+</style>
+{/literal} 
+
+<body>
+
+<div id="header">
+	<div id="banner">
+	<div id="home" style="height:70px; width:250px; position:relative; top:50px; left:100px; float:left"></div>
+		<form method="post">	
+        	<span style=" position:absolute; left:235px;"><input name="action" type="submit" value="Home"/></span>
+			{if !$session}
+				<input name="action" type="submit" value="Login" />
+				<input name="action" type="submit" value="Register" />	
+			{else}
+            	{if ($session['user_id']==1)}
+                    <span class="glyphicon glyphicon-user">
+                        </span><input type="button" value="{$session['account_name']}" />
+                    </span>
+                    <input name="action" type="submit" value="Pending Orders" />  
+                    <input name="action" type="submit" value="On-delivery Orders" />     	
+                {else}
+                    <span id="user">
+                        <span class="glyphicon glyphicon-user">
+                            </span><input type="button" value="{$session['account_name']}" />
+                            <span class="caret"></span>
+                        </span>
+                    </span>
+                    <span id="pw"><input class="btn btn-default" name="action" type="submit" value="Change Password" /></span>
+                    <input name="action" type="submit" value="Shopping Cart" />  
+                    <input name="action" type="submit" value="Purchase Tracking" />          
+                {/if}
+                
+                <input name="action" type="submit" value="Logout" />
+			{/if}
+		</form>
+    </div>
+</div>
+<div id="container">  
+	<div id="tracking">
+    <div id="location">
+    	<a href="ProductList.php">Home</a>
+        <span> > </span>
+        {if $session['user_id']==1}
+          	<a href="PendingOrders.php">Pending Orders</a>      
+        {else}
+        	<a href="PurchaseTracking.php">Purchase Tracking</a>
+        {/if}
+        <span> > Purchase Order Detail</span>
+    </div>
+    <div class="panel panel-success">
+		<div style="font-weight:bold" class="panel-heading">
+			<span>Customer Information</span>
+		</div>
+		<div class="panel-body">
+			<table>
+				<tr>
+					<td>
+                    	<span class="bold">Customer Name: </span>
+                        <span>{$userinfo['first_name']} {$userinfo['last_name']}</span>
+                    </td>
+				</tr>
+                <tr>
+                    <td>
+                    	<span class="bold">Shipping Address: </span>
+                   		<span>{$userinfo['shipping_address']}</span>
+                    </td>
+                </tr>
+             </table>
+        </div>
+	</div>
+    <div class="panel panel-info">
+        <div style="font-weight:bold" class="panel-heading">
+            <span style="text-align:left;">Order No: {$orderinfo['order_id']}</span>  
+            <span style=" float:right;">Total Cost: ${$totalcost}</span>
+        </div>
+        <div class="panel-body">
+            <div class="panel panel-default">
+              <div style="padding:10px; background-color:#f5f5f5" class="panel-body">
+                <table width="100%" style="text-align:center; font-weight:bold;">
+                    <tr>
+                        <td width="28%">Status: {$orderinfo['status']}</td>                    
+                        <td width="36%">Purchase Date: {$orderinfo['purchase_date']}</td>
+                        <td width="36%">Shipment Date: {if $orderinfo['shipment_date']!=""}{$orderinfo['shipment_date']}{else}-{/if}</td>
+                    </tr>
+                </table>
+              </div>
+            </div>      
+            <table class="table table-hover" style="word-break: break-all;">
+                <thead>
+                <tr>
+                    <th width="60%">Product Name</th>
+                    <th width="13%">Price</th>
+                    <th width="14%" class="qty">Quantity</th>
+                    <th width="13%">Subtotal</th>
+                </tr>
+                </thead>   
+                <tbody class="table-hover">
+                {foreach item=record from=$orderDetailList}
+                <tr>
+                    <td class="productname">{$record['book_name']}</td>
+                    <td>${$record['price']}</td>
+                    <td class="qty">{$record['qty']}</td>
+                    <td>${$record['subtotal']}</td>
+                </tr>
+                {/foreach}
+                </tbody>  
+            </table>
+        </div>
+    </div>
+    {if $orderinfo['status']=='shipped' &&  $session['user_id']!=1}
+    <form id="receiptForm" method="post">
+    <div style="text-align:right; padding-right:20px;">
+     <input name="receipt" type="hidden" value="{$orderinfo['order_id']}" />
+     <input name="handle" type="hidden" value="" />
+     
+     <input class="btn btn-success" type="button" value="Receipt" onclick="msg('receiptForm', 'Receipt')" />
+    </div>
+    </form>
+    {/if}
+    <input name="action_handle" type="hidden" value="" />
+    
+    <div id="msg" style="display:none;">
+	<div id="dialog" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" style="display:block; margin-top:150px">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel">Message</h4>
+          </div>
+          <div class="modal-body">
+           
+          </div>
+          <div class="modal-footer">
+            <button id="action" style="padding-left:20px; padding-right:20px" type="button" class="btn btn-primary">OK</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-backdrop fade in"></div>
+    </div>
+    
+    {if $session['user_id']==1 && ($orderinfo['status']=='pending' || $orderinfo['status']=='hold' )}
+    <form id="handleForm" method="post">
+    <div style="text-align:right; padding-right:20px;">
+     <input name="handle_order" type="hidden" value="{$orderinfo['order_id']}" />
+     <input name="handle" type="hidden" value="" />
+     
+     <input style="margin-right:10px" class="btn btn-success" type="button" value="Ship" onclick="msg('handleForm', 'Ship')" />
+     {if $orderinfo['status']!='hold'}
+     <input style="margin-right:10px" class="btn btn-warning" type="button" value="Hold" onclick="msg('handleForm', 'Hold')" />
+     {/if}
+     <input style="margin-right:10px" class="btn btn-danger" type="button" value="Cancel" onclick="msg('handleForm', 'Cancel')" />
+    </div>
+    </form>
+    {/if}
+    </div>  
+
+</div>
+
+<div id="footer">
+    <div style=" border-top:5px solid #A2C9EA; margin: 0 auto; width:976px" >
+    	<p>Copyright © 2014 Bookstore Inc. All rights reserved</p>
+    </div>
+</div>
+
+
+
+{if $orderinfo['status']=='hold'}
+<script language="javascript">
+$(document).ready(function(){
+	$('#handleForm input[value=Ship]').val("Unhold and Ship");
+})
+</script>
+{/if}
+
+{literal} 
+<script language="javascript">
+
+function msg(value, msg_info){
+	switch(msg_info){
+		case 'Receipt':
+			$('#msg div.modal-body').text('Are you sure to confirm this order?');	
+			break;
+		case 'Ship':
+			$('#msg div.modal-body').text('Are you sure to ship this order?');	
+			break;
+		case 'Hold':
+			$('#msg div.modal-body').text('Are you sure to hold this order?');	
+			break;
+		case 'Cancel':
+			$('#msg div.modal-body').text('Are you sure to cancel this order?');	
+			break;
+	}
+	$('#msg>div').addClass('in');	
+	$('#dialog').attr('aria-hidden','false');
+	$('#msg>div').css('display','block');	
+	$('#msg').css('display','block');
+	$('input[name=action_handle]').val(msg_info);
+}
+
+$(document).ready(function(){
+
+$('#handleForm input').click(function(){
+	$('#handleForm input[name=handle]').val($(this).val());
+})
+
+$('#receiptForm input').click(function(){
+	$('#receiptForm input[name=handle]').val($(this).val());
+})
+
+$('#msg #action').click(function(){
+	if($('input[name=action_handle]').val() == 'Receipt'){
+		receiptForm.submit();	
+	}else{
+		handleForm.submit();
+	}
+})
+
+
+/*dialog*/
+$('#dialog button').click(function(){
+	$('.in').css('display','none');	
+	$('.in').removeClass('in');	
+	$('#dialog').attr('aria-hidden','true');
+})
+
+/*user change pw*/
+$('#user').hover(function(e){
+	$('#pw').css('display','inline');
+});
+$('input[name=action]').hover(function(e){
+	if ($(this).val() != "Change Password")
+		$('#pw').css('display','none');
+});
+
+$('#pw').mouseleave(function(e){
+	$('#pw').css('display','none');
+});
+
+
+})
+</script>
+{/literal} 
+
+</body>
+</html>
+

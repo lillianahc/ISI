@@ -1,0 +1,329 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Product List</title>
+<link rel="stylesheet" href="assets/css/reset.css"/>
+<link rel="stylesheet" href="assets/css/bootstrap.css"/>
+<link rel="stylesheet" href="assets/css/bootstrap-theme.css"/>
+<script src="assets/js/jquery-1.11.0.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+
+
+</head>
+{literal} 
+<style>
+/*--------common---------*/
+#header input { color:#2154a8; font-size:14px; margin:20px 10px 0 0; }
+#banner { width: 1000px; height: 141px; margin: 0 auto; padding:0 12px; text-align:right;
+ background: url(assets/images/banner.png) no-repeat; }
+#home{ cursor:pointer;}
+#user { margin:20px 10px 0 0; cursor:pointer; }
+#user input { margin:0;  padding-right:0;}
+#pw{ background:#CCC; position:relative; float:left; top:40px; left:260px; display:none;}
+#pw input { color:#333; margin:0; padding:5px;}
+.bold{ font-weight:bold; }
+a { cursor:pointer;}
+
+#container { width: 1000px; min-height: 1515px; margin: 0 auto; padding:0 12px 10px 12px;
+ background: url(assets/images/container.png) repeat-y; }
+
+#footer { width: 1000px; height: 80px; margin: 0 auto; padding:0 12px;
+ background: url(assets/images/footer.png) repeat-y; }
+#footer p{ color:#666; font-size:12px; text-align:center; margin:20px 0;}
+
+#searchBackground { width:auto; height:44px; background:url(assets/images/search.png); }
+#searchBar { width:700px; height:44px; margin:0 auto;}
+#searchBar > div { float:left;}
+
+.vendor { display:none;}
+
+/*----------price sort-------------*/
+#sort { height:30px; background-color:#f2f2f2; border-bottom:1px solid #CCC; border-top:1px solid #CCC;}
+#sort table tr td { padding:0 13px; line-height:28px; text-align:center; border-right:1px solid #CCC;}
+table tr td:hover { background-color:#FFF; cursor:pointer;}
+table tr td:active { background-color:#DFDFDF; cursor:pointer;}
+
+/*----------product-----------*/
+#product { width:976px; height:1700px; padding:20px 5px 10px 5px;}
+#product > div { font-size:12px; width:25%; margin-bottom:25px; }
+#product a {color:#333}
+#product a:hover {color:#39F;}
+
+.thumbnail { width:210px; height:200px; display:table-cell; vertical-align:middle; text-align:center; background-color:#F3F3F3 }
+.thumbnail img{ max-width:200px; max-height:190px; }
+#product .category { position:absolute; bottom:0;}
+#product .price { font-size:16px; float:right}
+#product .product_name { height:30px; margin:0;}
+
+/*----------paging------------*/
+#paging div{ text-align: center; height:50px;}
+
+</style>
+{/literal} 
+<body>
+
+<div id="header">
+	<div id="banner">
+	<div id="home" style="height:70px; width:250px; position:relative; top:50px; left:100px; float:left"></div>
+		<form method="post">	
+        	<span style=" position:absolute; left:235px;"><input name="action" type="submit" value="Home"/></span>
+			{if !$session}
+				<input name="action" type="submit" value="Login" />
+				<input name="action" type="submit" value="Register" />	
+			{else}
+            	{if ($session['user_id']==1)}
+                    <span class="glyphicon glyphicon-user">
+                        </span><input type="button" value="{$session['account_name']}" />
+                    </span>
+                    <input name="action" type="submit" value="Pending Orders" />  
+                    <input name="action" type="submit" value="On-delivery Orders" />     	
+                {else}
+                    <span id="user">
+                        <span class="glyphicon glyphicon-user">
+                            </span><input type="button" value="{$session['account_name']}" />
+                            <span class="caret"></span>
+                        </span>
+                    </span>
+                    <span id="pw"><input class="btn btn-default" name="action" type="submit" value="Change Password" /></span>
+                    <input name="action" type="submit" value="Shopping Cart" />  
+                    <input name="action" type="submit" value="Purchase Tracking" />          
+                {/if}
+                
+                <input name="action" type="submit" value="Logout" />
+			{/if}
+		</form>
+    </div>
+</div>
+
+
+
+
+<div id="container">
+	<div id="searchBackground">
+	<div id="searchBar">
+    <div class="row" style="padding:5px 0;">
+		<form name="condition" method="get">
+        <div class="col-lg-6" style="width:700px">
+            <div class="input-group">
+                <div id="categoryList" class="input-group-btn">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="text">Category List</span> <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    {foreach item=record from=$catagoryList}
+                    <li><a>{$record['name']}</a><input type="hidden" value="{$record['category_id']}"/></li>
+                    {/foreach}              	
+                    <li class="divider"></li>
+                    <li><a>All product</a><input type="hidden" value="0"/></li>
+                  </ul>
+                </div>
+              <input name="category" type="hidden" value="{$category}" />
+              <input name="search" type="text" class="form-control" placeholder="Search" value="{$word}">
+              <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit"><span class="glyphicon glyphicon-search" style="margin-right:5px;"></span>Go</button>
+              </span>
+            </div>
+        </div>
+        </form>
+    </div>
+    <div class="vendor" style="padding:5px 0;">
+    	<form method="post">
+    		<button name="action" type="submit" class="btn btn-warning" value="Add Product">Add Product</button>
+        </form>
+    </div>
+    
+    </div>
+    </div>
+    <form name="pricesort" method="get">
+     	<input name="category" type="hidden" value="{$category}" />
+     	<input name="search" type="hidden" value="{$word}">
+    <div id="sort">
+    <table>
+    	<tr>
+        	<td>All</td>
+            <td>Price
+            <div class="sort" style="background:url(assets/images/sort.png) no-repeat; background-position:0 0; height:9px; width:7px; display:inline-block;"></div>
+            </td>
+            <input name="sort" type="hidden" value="{$pricesort}">
+        </tr>
+    </table>
+    </div>
+    </form>
+    <div id="product">
+    {foreach item=record from=$productList}
+        <div class="col-xs-6 col-md-3">
+        <form name="id_{$record['book_id']}" action="ProductDetail.php" method="get">
+          <input name="book_id" type="hidden" value="{$record['book_id']}" />
+          <a href="javascript:id_{$record['book_id']}.submit();" class="thumbnail">
+            <img src="assets/product/{$record['thumbnail']}.{$record['type']}" alt=""/>
+          </a>
+          <p class="product_name"><a href="javascript:id_{$record['book_id']}.submit();" >{$record['book_name']}</a></p>
+            <p>
+            	<span class="category">{$record['category']}</span>
+            	<span class="price">${$record['price']}</span>
+            </p>
+        </form>
+        </div>
+    {/foreach}
+    {if $error}
+    	<p style="padding-left:20px;">{$error}</p>
+    {/if}
+	</div>
+	{if $pages>1}
+    <form name="pagination" method="get">
+    <input name="category" type="hidden" value="{$category}" />
+    <input name="search" type="hidden" value="{$word}">
+    <input name="sort" type="hidden" value="{$pricesort}">
+    <div id="paging">
+    	<div>
+            <ul class="pagination">
+              <input name="page" type="hidden" value="{if $page}{$page}{else}1{/if}"/>
+              <li id="prev"><a>Previous</a></li>          
+              {for $var=1 to $pages}
+              <li><a class="active" href="javascript:pagination.submit();" >{$var}</a></li>
+			  {/for}
+              <li id="next"><a>Next</a></li>
+            </ul>
+        </div>
+    </div>
+    </form>
+    {/if}
+</div>
+
+
+<div id="footer">
+    <div style=" border-top:5px solid #A2C9EA; margin: 0 auto; width:976px" >
+    	<p>Copyright © 2014 Bookstore Inc. All rights reserved</p>
+    </div>
+</div>
+
+
+{if ($session['user_id']==1)}
+<script language="javascript">
+	$('#searchBar .row .col-lg-6').css('width', '580px');
+	$('.vendor').css('display', 'block');
+	$('.customer').css('display', 'none');
+</script>
+{/if}
+
+{literal} 
+<script language="javascript">
+$(document).ready(function(){
+/*paging*/
+$('#paging ul li').each(function(index, element) {
+	if ($(element).has('a').text() == $('#paging input[name=page]').val()){
+		$(element).addClass('active');
+	}
+});
+
+$('#paging ul li').click(function(e) {
+	if ( $(this).find('a').attr('href') )
+		$('#paging input[name=page]').val($(this).has('a').text());
+});
+
+$('#prev').click(function(e){
+	if ($('#paging input[name=page]').val()<=1){
+		$(this).addClass("disabled");
+	}else{
+		$(this).removeClass("disabled");
+		$('#paging input[name=page]').val(parseInt($('#paging input[name=page]').val())-1);
+		pagination.submit();
+	}
+})
+$('#next').click(function(e){
+	if ($('#paging input[name=page]').val()>=parseInt($('#paging ul li').eq(-2).find('a').text())){
+		$(this).addClass("disabled");
+	}else{
+		$(this).removeClass("disabled");
+		$('#paging input[name=page]').val(parseInt($('#paging input[name=page]').val())+1);
+		pagination.submit();
+	}
+})
+
+if ($('#paging input[name=page]').val()<=1){
+	$('#prev').addClass("disabled");
+}else{
+	$('#prev').removeClass("disabled");
+
+}
+if ($('#paging input[name=page]').val()>=$('#paging ul li').eq(-2).find('a').text()){
+	$('#next').addClass("disabled");
+}else{
+	$('#next').removeClass("disabled");
+
+}
+
+/*user change pw*/
+$('#user').hover(function(e){
+	$('#pw').css('display','inline');
+});
+$('input[name=action]').hover(function(e){
+	if ($(this).val() != "Change Password")
+		$('#pw').css('display','none');
+});
+$('#pw').mouseleave(function(e){
+	$('#pw').css('display','none');
+});
+
+/*sort*/
+$('table tr td').click(function(e){
+	$('table tr td').css('background-color','#f2f2f2');
+	$(this).css('background-color','white');
+})
+
+$('table tr td:first-child').click(function(e){
+	$('table tr td div').css('background-position','0px 0px');
+	$('input[name=sort]').val('book_name');
+	pricesort.submit();
+})
+ 
+$('table tr td').has("div").click(function(e){
+	var sortpo = $('table tr td div');
+	if (sortpo.css('background-position') == ('0px 0px') || sortpo.css('background-position') == '-16px 0px'){
+		sortpo.css('background-position','-8px 0px'); 
+		$('input[name=sort]').val('ASC');
+	}else{
+		sortpo.css('background-position','-16px 0px');
+		$('input[name=sort]').val('DESC');
+	}
+	pricesort.submit();
+})
+
+if ($('input[name=sort]').val() == 'ASC'){
+	$('table tr td div').css('background-position','-8px 0px'); 
+	$('table tr td').has("div").css('background-color','white');
+}else if ($('input[name=sort]').val() == 'DESC'){
+	$('table tr td div').css('background-position','-16px 0px');
+	$('table tr td').has("div").css('background-color','white');
+}else if ($('input[name=sort]').val() == 'book_name'){
+	$('table tr td:first-child').css('background-color','white');
+}
+
+
+/*img size*/
+$('img').each(function(index, element) {
+	var ie = !-[1,];
+	if(ie && $(element).width() > $(element).height()){
+		$(element).css('width','100%');
+	}
+});
+
+/*dropdown list*/
+$('#categoryList ul li').click(function(){
+	$('#categoryList button .text').text($(this).find('a').text());
+	$("input[name='category']").val($(this).find('input').val());
+})
+
+if ($("input[name='category']").val()!=""){
+	$('#categoryList ul li').each(function(index, element) {
+		if ($(element).find('input').val() == $("input[name='category']").val()){
+			$('#categoryList button .text').text($(element).find('a').text());
+		}
+	});
+}
+
+})
+</script>
+{/literal} 
+</body>
+</html>

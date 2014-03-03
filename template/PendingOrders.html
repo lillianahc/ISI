@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Pending Orders</title>
+<link rel="stylesheet" href="assets/css/reset.css"/>
+<link rel="stylesheet" href="assets/css/bootstrap.css"/>
+<link rel="stylesheet" href="assets/css/bootstrap-theme.css"/>
+<script src="assets/js/jquery-1.11.0.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+
+</head>
+{literal} 
+<style>
+
+/*--------common---------*/
+#header input { color:#2154a8; font-size:14px; margin:20px 10px 0 0; }
+#banner { width: 1000px; height: 141px; margin: 0 auto; padding:0 12px; text-align:right;
+ background: url(assets/images/banner.png) no-repeat; }
+#home{ cursor:pointer;}
+#user { margin:20px 10px 0 0; cursor:pointer; }
+#user input { margin:0;  padding-right:0;}
+#pw{ background:#CCC; position:relative; float:left; top:40px; left:260px; display:none;}
+#pw input { color:#333; margin:0; padding:5px;}
+.bold{ font-weight:bold; }
+
+#container { width: 1000px; min-height: 1515px; margin: 0 auto; padding:0 12px;
+ background: url(assets/images/container.png) repeat-y; }
+
+#footer { width: 1000px; height: 80px; margin: 0 auto; padding:0 12px;
+ background: url(assets/images/footer.png) repeat-y; }
+#footer p{ color:#666; font-size:12px; text-align:center; margin:20px 0;}
+
+#searchBackground { width:auto; height:44px; background:url(assets/images/search.png); }
+#searchBar { width:700px; height:44px; margin:0 auto;}
+#searchBar > div { float:left;}
+
+.vendor { display:none;}
+
+/*------container size------*/
+#container { min-height: 680px; padding:10px 65px; }
+#pending{ min-height:680px; }
+ 
+/*----------table------------*/
+#container table tr td, #container table tr th{ vertical-align:middle; text-align:center; }
+#container table tr td:hover{ cursor:pointer;}
+
+/*----------paging------------*/
+#paging div{ text-align: center; }
+ 
+/*-----------location------------*/
+#location {margin:10px 0 15px 0}
+#location a { color:#3399ff; text-decoration:underline; }
+ 
+ 
+</style>
+{/literal} 
+
+<body>
+
+<div id="header">
+	<div id="banner">
+	<div id="home" style="height:70px; width:250px; position:relative; top:50px; left:100px; float:left"></div>
+		<form method="post">	
+        	<span style=" position:absolute; left:235px;"><input name="action" type="submit" value="Home"/></span>
+			{if !$session}
+				<input name="action" type="submit" value="Login" />
+				<input name="action" type="submit" value="Register" />	
+			{else}
+            	{if ($session['user_id']==1)}
+                    <span class="glyphicon glyphicon-user">
+                        </span><input type="button" value="{$session['account_name']}" />
+                    </span>
+                    <input name="action" type="submit" value="Pending Orders" />  
+                    <input name="action" type="submit" value="On-delivery Orders" />     	
+                {else}
+                    <span id="user">
+                        <span class="glyphicon glyphicon-user">
+                            </span><input type="button" value="{$session['account_name']}" />
+                            <span class="caret"></span>
+                        </span>
+                    </span>
+                    <span id="pw"><input class="btn btn-default" name="action" type="submit" value="Change Password" /></span>
+                    <input name="action" type="submit" value="Shopping Cart" />  
+                    <input name="action" type="submit" value="Purchase Tracking" />          
+                {/if}
+                
+                <input name="action" type="submit" value="Logout" />
+			{/if}
+		</form>
+    </div>
+</div>
+
+<div id="container">  
+	<div id="pending">
+    <div id="location">
+    	<a href="ProductList.php">Home</a>
+        <span> > Pending Orders</span>
+    </div>
+    <div class="panel panel-info">
+        <div style="font-weight:bold; text-align:right;" class="panel-heading">    
+            <span>Total Cost: ${if $totalcost}{$totalcost}{else}0.00{/if}</span>
+        </div>
+        <div class="panel-body">
+            <table class="table table-hover" style="word-break: break-all;">
+                <thead>
+                    <tr>
+                        <th width="15%">Order No.</th>
+                        <th width="20%">Status</th>
+                        <th width="25%">Purchase date</th>
+                        <th width="25%">Customer</th>
+                        <th width="15%">Subtotal</th>
+                    </tr>
+                </thead>   
+                <tbody class="table-hover">
+                {if $OrdersList}
+                    {foreach item=record from=$OrdersList}
+                    <tr>
+                    	<input name="user_id" type="hidden" value="{$record['user_id']}" />
+                        <td class="order_id">{$record['order_id']}</td>
+                        <td>{$record['status']}</td>
+                        <td>{$record['purchase_date']}</td>
+                        <td>{$record['first_name']} {$record['last_name']}</td>
+                        <td>${$record['subtotal']}</td>
+                    </tr>
+                    {/foreach}
+                 {else}
+                 	<tr><td colspan="4">No result found.</td></tr>
+                 {/if}
+                </tbody>  
+            </table>
+        </div>
+    </div>
+    </div>  
+	<form name="toOrderDetail" action="PurchaseOrderDetail.php" method="get">
+    	<input name="order_id" type="hidden" value="" />
+    </form>
+</div>
+
+<div id="footer">
+    <div style=" border-top:5px solid #A2C9EA; margin: 0 auto; width:976px" >
+    	<p>Copyright © 2014 Bookstore Inc. All rights reserved</p>
+    </div>
+</div>
+
+
+
+
+{literal} 
+<script language="javascript">
+
+$(document).ready(function(){
+
+/*user change pw*/
+$('#user').hover(function(e){
+	$('#pw').css('display','inline');
+});
+$('input[name=action]').hover(function(e){
+	if ($(this).val() != "Change Password")
+		$('#pw').css('display','none');
+});
+$('#pw').mouseleave(function(e){
+	$('#pw').css('display','none');
+});
+
+/*go to productlist page*/
+$('#home').click(function(e){
+	document.location.href="ProductList.php";
+})
+
+$('#container table tr').click(function(e){
+	$('input[name=order_id]').val($(this).find('.order_id').text());
+	toOrderDetail.submit();
+})
+
+})
+</script>
+{/literal} 
+
+</body>
+</html>
+

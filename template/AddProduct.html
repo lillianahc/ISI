@@ -1,0 +1,404 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Add Product</title>
+<link rel="stylesheet" href="assets/css/reset.css"/>
+<link rel="stylesheet" href="assets/css/bootstrap.css"/>
+<link rel="stylesheet" href="assets/css/bootstrap-theme.css"/>
+<script src="assets/js/jquery-1.11.0.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+
+</head>
+{literal} 
+<style>
+
+/*--------common---------*/
+#header input { color:#2154a8; font-size:14px; margin:20px 10px 0 0; }
+#banner { width: 1000px; height: 141px; margin: 0 auto; padding:0 12px; text-align:right;
+ background: url(assets/images/banner.png) no-repeat; }
+#home{ cursor:pointer;}
+#user { margin:20px 10px 0 0; cursor:pointer; }
+#user input { margin:0;  padding-right:0;}
+#pw{ background:#CCC; position:relative; float:left; top:40px; left:260px; display:none;}
+#pw input { color:#333; margin:0; padding:5px;}
+.bold{ font-weight:bold; }
+a { cursor:pointer; }
+
+#container { width: 1000px; min-height: 1515px; margin: 0 auto; padding:0 12px;
+ background: url(assets/images/container.png) repeat-y; }
+
+#footer { width: 1000px; height: 80px; margin: 0 auto; padding:0 12px;
+ background: url(assets/images/footer.png) repeat-y; }
+#footer p{ color:#666; font-size:12px; text-align:center; margin:20px 0;}
+
+#searchBackground { width:auto; height:44px; background:url(assets/images/search.png); }
+#searchBar { width:700px; height:44px; margin:0 auto;}
+#searchBar > div { float:left;}
+
+.vendor { display:none;}
+
+/*------addproduct------*/
+#container { min-height: 800px; padding:20px 100px; }
+
+#step{ width:626px; height:34px; margin:0 auto; background:url(assets/images/step.png) no-repeat;}
+#step > div{ display:table-cell; height:34px; width:313px; color:#FFF; font-weight:bold; vertical-align:middle; text-align:center; }
+	
+#addproduct { width:600px; margin:0 auto;}
+#addproduct tr td{ height:45px; padding-left:5px;}
+#addproduct tr:first-child td{ height:40px;}
+#addproduct tr td:first-child {vertical-align:top; text-align:right;}
+#addproduct tr td input { width:200px; display:inline-block;}
+#addproduct tr td:first-child span { color:red; margin-right:2px;}
+
+.warning{ color:red; vertical-align:bottom; margin-left:5px;}
+
+/*------inputbox size---------*/
+#addproduct tr td input[name="productName"] { width:400px;}
+#addproduct tr td input[name="authors"] { width:300px;}
+#addproduct tr td input[name="price"] { width:85px;}
+#addproduct tr td input[name="pages"] { width:85px;}
+
+/*------addproduct complete------*/
+#complete{  width:600px; padding:10px 0 0 100px; display:none; }
+ 
+</style>
+{/literal}
+
+<body>
+
+<div id="header">
+	<div id="banner">
+	<div id="home" style="height:70px; width:250px; position:relative; top:50px; left:100px; float:left"></div>
+		<form method="post">	
+        	<span style=" position:absolute; left:235px;"><input name="action" type="submit" value="Home"/></span>
+			{if !$session}
+				<input name="action" type="submit" value="Login" />
+				<input name="action" type="submit" value="Register" />	
+			{else}
+            	{if ($session['user_id']==1)}
+                    <span class="glyphicon glyphicon-user">
+                        </span><input type="button" value="{$session['account_name']}" />
+                    </span>
+                    <input name="action" type="submit" value="Pending Orders" />  
+                    <input name="action" type="submit" value="On-delivery Orders" />     	
+                {else}
+                    <span id="user">
+                        <span class="glyphicon glyphicon-user">
+                            </span><input type="button" value="{$session['account_name']}" />
+                            <span class="caret"></span>
+                        </span>
+                    </span>
+                    <span id="pw"><input class="btn btn-default" name="action" type="submit" value="Change Password" /></span>
+                    <input name="action" type="submit" value="Shopping Cart" />  
+                    <input name="action" type="submit" value="Purchase Tracking" />          
+                {/if}
+                
+                <input name="action" type="submit" value="Logout" />
+			{/if}
+		</form>
+    </div>
+</div>
+
+<div id="container">
+	<div id="step">
+    	<div>1. Fill-in Product Information</div>
+        <div style="color:#6FBEFF">2. Compelete</div>
+    </div>
+    <form id="addproductForm" method="post" enctype="multipart/form-data">
+    <div style="height:660px;">
+    <table id="addproduct">
+        <tr>
+            <td></td>
+            <td>&nbsp; {if $error}<span class="warning">{$error}</span>{/if}</td>
+        </tr>
+        <tr>
+            <td width="25%"><span>*</span>Product Name:</td>
+            <td><input name="productName" type="text" class="form-control"></td>
+        </tr>
+        <tr>
+            <td><span>*</span>Category:</td>
+            <td id="categoryList">
+            	<div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="text">Category List</span> <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    {foreach item=record from=$catagoryList}
+                    <li><a>{$record['name']}</a><input type="hidden" value="{$record['category_id']}"/></li>
+                    {/foreach}
+                  </ul>
+                </div>
+                <input name="category" type="hidden" value="" />
+            </td>
+        </tr>
+        <tr>
+            <td><span>*</span>Price:</td>
+            <td>
+				<div class="input-group">
+                  <span class="input-group-addon">$</span>
+                  <input name="price" type="text" class="form-control" width="50">
+				</div>
+            </td>
+        </tr>
+        <tr>
+            <td><span>*</span>Image:</td>
+            <td>
+            	<div class="col-lg-6" style="width:250px; padding:0; height:30px;">
+                	<div class="input-group">
+                      <input id="disabledInput" type="text" class="fake_file_path form-control input-sm" disabled>
+                      <span class="input-group-btn">
+                      <button id="upload1" class="btn btn-default btn-sm" type="button">Browse..</button>
+                      </span>
+                    </div>
+                    <input name="image1" type="file" class="fake_upload_file" style="height:30px; width:70px; position:relative; top:-30px; left:200px; z-index:10; opacity:0;">
+                </div><span class="img_warning" style=" color:red; margin-left:25px; position:relative; top:10px; display:none;">Please upload image</span>
+            </td>
+        </tr>
+        <tr>
+            <td><span>*</span>Publisher:</td>
+            <td><input name="publisher" type="text" class="form-control"></td>
+        </tr>
+        <tr>
+            <td><span>*</span>Publisher City:</td>
+            <td><input name="city" type="text" class="form-control"></td>
+        </tr>
+        <tr>
+            <td><span>*</span>Authors:</td>
+            <td><input name="authors" type="text" class="form-control">
+				<p style="font-weight:bold; margin-bottom:5px;">Separated authors by semicolons.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><span>*</span>ISBN:</td>
+            <td><input name="ISBN" type="text" class="form-control"></td>
+        </tr>
+        <tr>
+            <td><span>*</span>Language:</td>
+            <td id="languageList">
+            	<div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="text">Language List</span> <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a>English</a></li>
+                    <li><a>Chinese</a></li>
+                    <li><a>Japanese</a></li>
+                  </ul>
+                </div><input name="language" type="hidden" value="" />
+            </td>
+        </tr>
+        <tr>
+            <td><span>*</span>Release date:</td>
+            <td><input name="ReleaseDate" type="text" class="form-control"></td>
+        </tr>
+        <tr>
+            <td><span>*</span>Pages:</td>
+            <td><input name="pages" type="text" class="form-control"></td>
+        </tr>
+        <tr>
+            <td>Other Description:</td>
+            <td><textarea name="otherDes" class="form-control" rows="3"></textarea></td>
+        </tr>  
+    </table>
+    </div>
+    <div style="width:600px; margin:0 auto; text-align:right; ">
+		<button style="margin-right:15px" name="addProduct" value="addProduct" type="submit" class="btn btn-info">Submit</button>
+		<button name="reset" type="button" class="btn btn-default">Reset</button>
+    </div>
+    </form>
+{if $success}
+    <div id="complete">
+        <p>{$success}</p>
+    </div>
+{/if}
+</div>
+
+<div id="footer">
+    <div style=" border-top:5px solid #A2C9EA; margin: 0 auto; width:976px" >
+    	<p>Copyright © 2014 Bookstore Inc. All rights reserved</p>
+    </div>
+</div>
+
+{if $success}
+<script language="javascript">
+		$('#step').css('background-position','0px -34px');
+		$('#step div').eq(0).css('color','#6FBEFF');	
+		$('#step div').eq(1).css('color','#FFF');
+		$('#addproductForm').css('display','none');
+		$('#complete').css('display','block');
+</script>
+{/if}
+
+<script language="javascript">
+$(document).ready(function(){
+$(".fake_upload_file").change(function(){
+    var file_path=$(this).val();   
+    $(".fake_file_path").val(file_path);   
+});  
+
+$("input[name=image1]").mousedown(function(){
+	$("#upload1").addClass("active");
+})
+$("input[name=image1]").mouseup(function(){
+	$("#upload1").removeClass("active");
+})
+	
+})
+</script>
+
+{literal} 
+<script language="javascript">
+
+$(document).ready(function(){
+
+/*user change pw*/
+$('#user').hover(function(e){
+	$('#pw').css('display','inline');
+});
+$('input[name=action]').hover(function(e){
+	if ($(this).val() != "Change Password")
+		$('#pw').css('display','none');
+});
+$('#pw').mouseleave(function(e){
+	$('#pw').css('display','none');
+});
+
+/*checking*/
+var product_info = {
+	productName: 'Please enter product name',
+	category: 'Please select category',
+	price: 'Please enter price',
+	publisher: 'Please enter publisher',
+	city: 'Please enter publisher city',
+	authors: 'Please enter authors',
+	ISBN: 'Please enter ISBN',
+	language: 'Please select language',
+	ReleaseDate: 'Please enter Release date',
+	pages: 'Please enter pages'
+}
+function checkInput(name, errormsg){
+	$('input[name='+ name +']+span').remove();
+	if ($.trim($('input[name='+ name +']').val()) == "" ) {
+		$('input[name='+ name +']').after("<span class='warning'>"+ errormsg +"</span>");
+	}
+};
+
+$("input").blur(function(e){
+	var name = $(this).attr('name');
+	var errormsg = product_info[name];
+	
+	if (product_info[name]){
+		checkInput(name, errormsg);
+	}
+});
+
+$("input[name='price']").blur(function(e){
+	if ($.trim($(this).val()) != "" ){
+		$("input[name='price']+span").remove();	
+		var num = /^\d{1,}(\.\d{1,2})?$/;	
+		if (!num.test($.trim($(this).val()))){
+			$(this).after("<span class='warning'>Invalid number format.</span>");			
+		}else{
+			$(this).val(parseFloat($.trim($(this).val())));
+			if ($(this).val()>0){
+				var num1 = /^\d{1,}$/;	
+				if (num1.test($.trim($(this).val())))
+					$(this).val($(this).val()+'.00');	
+				var num2 = /^\d{1,}(\.\d{1})$/;	
+				if (num2.test($.trim($(this).val())))
+					$(this).val($(this).val()+'0');
+			}else{
+				$(this).after("<span class='warning'>Price cannot be zero.</span>");	
+			}
+		}
+	}
+});
+
+$("input[name='ISBN']").blur(function(e){
+	if ($.trim($("input[name='ISBN']").val()) != "" ){
+		$("input[name='ISBN']+span").remove();	
+		var ISBN = /^(\d{10}|\d{13}|\d{3}\-\d{5}\-\d{1}-\d{1}|\d{3}\-\d{3}\-\d{5}\-\d{1}-\d{1})$/;	
+		if (!ISBN.test($.trim($("input[name='ISBN']").val()))){
+			$(this).after("<span class='warning'>Invalid ISBN format.</span>");			
+		}else{
+			$("input[name='ISBN']").val($("input[name='ISBN']").val().replace(/\-/g,''));
+		}
+	}
+});
+
+$("input[name='ReleaseDate']").blur(function(e){
+	if ($.trim($("input[name='ReleaseDate']").val()) != "" ){
+		$("input[name='ReleaseDate']+span").remove();	
+		var date = /^\d{4}\-[01]?[0-2]\-([0-2]?[0-9]|[3][01])$/;
+		if (!date.test($.trim($("input[name='ReleaseDate']").val()))){
+			$(this).after("<span class='warning'>Invalid date format.</span>");			
+		}
+	}
+});
+
+$("input[name='pages']").blur(function(e){
+	if ($.trim($("input[name='pages']").val()) != "" ){
+		$("input[name='pages']+span").remove();	
+		var num = /^\d{0,5}$/;	
+		if (!num.test($.trim($("input[name='pages']").val()))){
+			$(this).after("<span class='warning'>Invalid number format.</span>");			
+		}else{
+			$(this).val(parseInt($.trim($(this).val())));
+			if ($(this).val()<=0){
+				$(this).after("<span class='warning'>Pages cannot be zero.</span>");	
+			}
+		
+		}
+	}
+});
+
+/*dropdown list*/
+$('#categoryList ul li').click(function(){
+	$('#categoryList button .text').text($(this).find('a').text());
+	$("input[name='category']").val($(this).find('input').val());
+	checkInput('category', product_info['category']);
+})
+
+$('#languageList ul li').click(function(){
+	$('#languageList button .text').text($(this).find('a').text());
+	$("input[name='language']").val($(this).find('a').text());
+	checkInput('language', product_info['language']);
+})
+
+
+/*submit*/
+$('#addproductForm').submit(function(e) {  
+	$("input").blur();
+	if (!$("#disabledInput").val()){
+		$('.img_warning').css('display', 'inline');
+	}else{
+		$('.img_warning').css('display', 'none');	
+	}
+	if($("form span.warning").size() > 0 || $('.img_warning').css('display')=='inline'){
+		return false;
+	}
+	$("button[type='submit']").css('disabled','disabled');
+});  
+
+/*reset*/
+$("button[name='reset']").click(function(){
+	$("span.warning").remove();
+	$('.img_warning').css('display', 'none');
+	$("#addproductForm input").val('');
+	$("#addproductForm textarea").val('');
+	$('#categoryList button .text').text('Category List');
+	$('#languageList button .text').text('Language List');
+})
+
+/*go to productlist page*/
+$('#home').click(function(e){
+	document.location.href="ProductList.php";
+})
+
+
+})
+</script>
+{/literal} 
+
+</body>
+</html>
+

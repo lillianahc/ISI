@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Register</title>
+<link rel="stylesheet" href="assets/css/reset.css"/>
+<link rel="stylesheet" href="assets/css/bootstrap.css"/>
+<link rel="stylesheet" href="assets/css/bootstrap-theme.css"/>
+<script src="assets/js/jquery-1.11.0.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+
+</head>
+{literal} 
+<style>
+
+/*--------common---------*/
+#header input { color:#2154a8; font-size:14px; margin:20px 10px 0 0; }
+#banner { width: 1000px; height: 141px; margin: 0 auto; padding:0 12px; text-align:right;
+ background: url(assets/images/banner.png) no-repeat; }
+#home{ cursor:pointer;}
+#user { margin:20px 10px 0 0; cursor:pointer; }
+#user input { margin:0;  padding-right:0;}
+#pw{ background:#CCC; position:relative; float:left; top:40px; left:260px; display:none;}
+#pw input { color:#333; margin:0; padding:5px;}
+.bold{ font-weight:bold; }
+
+#container { width: 1000px; min-height: 1515px; margin: 0 auto; padding:0 12px;
+ background: url(assets/images/container.png) repeat-y; }
+
+#footer { width: 1000px; height: 80px; margin: 0 auto; padding:0 12px;
+ background: url(assets/images/footer.png) repeat-y; }
+#footer p{ color:#666; font-size:12px; text-align:center; margin:20px 0;}
+
+#searchBackground { width:auto; height:44px; background:url(assets/images/search.png); }
+#searchBar { width:700px; height:44px; margin:0 auto;}
+#searchBar > div { float:left;}
+
+.vendor { display:none;}
+
+/*------register------*/
+#container { min-height: 600px; padding:20px 100px; }
+
+#step{ width:626px; height:34px; margin:0 auto; background:url(assets/images/step.png) no-repeat;}
+#step > div{ display:table-cell; height:34px; width:313px; color:#FFF; font-weight:bold; vertical-align:middle; text-align:center; }
+	
+#register { width:600px; border-collapse:separate; border-spacing:5px 10px; margin:0 auto;}
+#register tr td:first-child {vertical-align:top; text-align:right;}
+#register tr td input { width:200px; display:inline-block;}
+#register tr td span { color:red; margin-right:2px;}
+
+.warning{ color:red; vertical-align:bottom; margin-left:5px;}
+
+/*------register complete------*/
+#complete{  width:600px; padding:10px 0 0 100px; display:none; }
+ 
+</style>
+{/literal}
+
+<body>
+
+<div id="header">
+	<div id="banner">
+	<div id="home" style="height:70px; width:250px; position:relative; top:50px; left:100px; float:left"></div>
+		<form method="post">	
+        	<span style=" position:absolute; left:235px;"><input name="action" type="submit" value="Home"/></span>
+			{if !$session}
+				<input name="action" type="submit" value="Login" />
+				<input name="action" type="submit" value="Register" />	
+			{else}
+            	{if ($session['user_id']==1)}
+                    <span class="glyphicon glyphicon-user">
+                        </span><input type="button" value="{$session['account_name']}" />
+                    </span>
+                    <input name="action" type="submit" value="Pending Orders" />  
+                    <input name="action" type="submit" value="On-delivery Orders" />     	
+                {else}
+                    <span id="user">
+                        <span class="glyphicon glyphicon-user">
+                            </span><input type="button" value="{$session['account_name']}" />
+                            <span class="caret"></span>
+                        </span>
+                    </span>
+                    <span id="pw"><input class="btn btn-default" name="action" type="submit" value="Change Password" /></span>
+                    <input name="action" type="submit" value="Shopping Cart" />  
+                    <input name="action" type="submit" value="Purchase Tracking" />          
+                {/if}
+                
+                <input name="action" type="submit" value="Logout" />
+			{/if}
+		</form>
+    </div>
+</div>
+
+<div id="container">
+	<div id="step">
+    	<div>1. Personal Information</div>
+        <div style="color:#6FBEFF">2. Compelete</div>
+    </div>
+    <form id="registerForm" method="post">
+    <div style="height:400px;">
+    <table id="register">
+        <tr>
+            <td></td>
+            <td>&nbsp; {if $error}<span class="warning">{$error}</span>{/if}</td>
+        </tr>
+        <tr>
+            <td width="25%"><span>*</span>First Name:</td>
+            <td><input name="firstName" type="text" class="form-control" value="{$user_info['firstName']}"></td>
+        </tr>
+        <tr>
+            <td><span>*</span>Last Name:</td>
+            <td><input name="lastName" type="text" class="form-control" value="{$user_info['lastName']}"></td>
+        </tr>
+        <tr>
+            <td><span>*</span>Account Name:</td>
+            <td><input name="userName" type="text" class="form-control" value="{$user_info['userName']}"></td>
+        </tr>
+        <tr>
+            <td><span>*</span>Passward:</td>
+            <td><input name="password" type="password" class="form-control"></td>
+        </tr>
+        <tr>
+            <td><span>*</span>Confirm Passward:</td>
+            <td><input name="confirm" type="password" class="form-control"></td>
+        </tr>
+        <tr>
+            <td><span>*</span>E-mail:</td>
+            <td><input name="email" style="width:100%;" type="email" class="form-control" value="{$user_info['email']}"></td>
+        </tr>
+        <tr>
+            <td><span>*</span>Shipping Address:</td>
+            <td><textarea name="shipAddress" class="form-control" rows="2">{$user_info['shipAddress']}</textarea></td>
+        </tr>  
+    </table>
+    </div>
+    <div style="width:600px; margin:0 auto; text-align:right; ">
+		<button style="margin-right:15px" name="register" value="register" type="submit" class="btn btn-info">Submit</button>
+		<button name="reset" type="button" class="btn btn-default">Reset</button>
+    </div>
+    </form>
+{if $success}
+    <div id="complete">
+        <p>Register successful!</p>
+        <p>login ID: {$user_info['userName']}</p>
+        <p>password: {$user_info['password']}</p>
+        <p>Thank you for registration.</p>
+    </div>
+{/if}
+</div>
+
+<div id="footer">
+    <div style=" border-top:5px solid #A2C9EA; margin: 0 auto; width:976px" >
+    	<p>Copyright © 2014 Bookstore Inc. All rights reserved</p>
+    </div>
+</div>
+
+{if $success}
+<script language="javascript">
+		$('#step').css('background-position','0px -34px');
+		$('#step div').eq(0).css('color','#6FBEFF');	
+		$('#step div').eq(1).css('color','#FFF');
+		$('#registerForm').css('display','none');
+		$('#complete').css('display','block');
+</script>
+{/if}
+
+
+{literal} 
+<script language="javascript">
+
+$(document).ready(function(){
+
+/*user change pw*/
+$('#user').hover(function(e){
+	$('#pw').css('display','inline');
+});
+$('input[name=action]').hover(function(e){
+	if ($(this).val() != "Change Password")
+		$('#pw').css('display','none');
+});
+$('#pw').mouseleave(function(e){
+	$('#pw').css('display','none');
+});
+
+/*checking*/
+var register_info = {
+	firstName: 'Please enter first name',
+	lastName: 'Please enter last name',
+	userName: 'Please enter account name',
+	password: 'Please enter password',
+	'confirm': 'Please enter confirm password',
+	email: 'Please enter e-mail address',
+}
+function checkInput(name, errormsg){
+	$('input[name='+ name +']+span').remove();
+	if ($.trim($('input[name='+ name +']').val()) == "" ) {
+		$('input[name='+ name +']').after("<span class='warning'>"+ errormsg +"</span>");
+	}
+};
+$("input").blur(function(e){
+	var name = $(this).attr('name'); 
+	var errormsg = register_info[name];
+	checkInput(name, errormsg);
+});
+
+$("input[name='confirm']").blur(function(e){
+	if ($("input[name='confirm']").val() != $("input[name='password']").val() ) {
+		$("input[name='confirm']+span").remove();
+		$(this).after("<span class='warning'>Two passwords are not same.</span>");
+	}	
+});
+
+$("input[name='email']").blur(function(e){
+	if ($.trim($("input[name='email']").val()) != "" ){
+		$("input[name='email']+span").remove();		
+		var email = /^[a-z]([a-z0-9]*[-_]?[a-z0-9]+)*@([a-z0-9]*[-_]?[a-z0-9]+)+[\.][a-z]{2,3}([\.][a-z]{2})?$/i;	
+		if (!email.test($.trim($("input[name='email']").val()))){
+			$(this).after("<span class='warning'>Invalid e-mail format.</span>");			
+		}
+	}
+});
+
+$("textarea[name='shipAddress']").blur(function(e){
+	$("textarea[name='shipAddress']+span").remove();
+	if ($("textarea[name='shipAddress']").val() == "" ) {
+		$(this).after("<span class='warning'>Please enter shipping address</span>");
+	}
+});
+
+$("input[name='userName']").focus(function(e){
+	$("#register tr:first-child td span").remove();
+});
+
+/*submit*/
+$('#registerForm').submit(function() {  
+	$("input").blur();
+	$("textarea").blur(); 
+	if($("form span.warning").size() > 0){
+		return false;
+	}
+	$("button[type='submit']").css('disabled','disabled');
+});  
+
+/*reset*/
+$("button[name='reset']").click(function(){
+	$("span.warning").remove();
+	$("#registerForm input").val('');
+	$("#registerForm textarea").val('');
+})
+
+/*go to productlist page*/
+$('#home').click(function(e){
+	document.location.href="ProductList.php";
+})
+
+
+})
+</script>
+{/literal} 
+
+</body>
+</html>
+
