@@ -14,31 +14,37 @@
 <style>
 
 /*--------common---------*/
-#header input { color:#2154a8; font-size:14px; margin:20px 10px 0 0; }
-#banner { width: 1000px; height: 141px; margin: 0 auto; padding:0 12px; text-align:right;
- background: url(assets/images/banner.png) no-repeat; }
-#home{ cursor:pointer;}
+body { background-color:#f3f3f3;}
+#logo{ background:url(assets/images/LOGO.png) no-repeat; background-size:80px; width:80px; height:80px;
+	 float:left; margin:15px 0 0 50px;}
+#user_action input { color:#FFFFFF; font-size:12px; font-weight:bold; margin:10px 10px 2px 0; }
+#banner { width: 1000px; height: 100px; margin: 0 auto; padding:0 12px; text-align:right;
+ background: url(assets/images/container.png) repeat-y; }
 #user { margin:20px 10px 0 0; cursor:pointer; }
 #user input { margin:0;  padding-right:0;}
-#pw{ background:#CCC; position:relative; float:left; top:40px; left:260px; display:none;}
+#pw{position:relative; float:left; top:32px; left:490px; display:none;}
 #pw input { color:#333; margin:0; padding:5px;}
 .bold{ font-weight:bold; }
+a { cursor:pointer;}
 
-#container { width: 1000px; min-height: 1515px; margin: 0 auto; padding:0 12px;
+#header #categoryList ul li{ text-align:left;}
+.navbar-default { background-color: #3e7fdc; border-color: #336cbf;}
+#user_action{ width: 980px; margin: 0 auto; text-align:right; }
+#container { width: 1000px; min-height: 1515px; margin: 0 auto; padding:0 12px 10px 12px;
  background: url(assets/images/container.png) repeat-y; }
 
 #footer { width: 1000px; height: 80px; margin: 0 auto; padding:0 12px;
  background: url(assets/images/footer.png) repeat-y; }
-#footer p{ color:#666; font-size:12px; text-align:center; margin:20px 0;}
+#footer p{ color:#fff; font-size:12px; text-align:center; margin:20px 0;}
 
-#searchBackground { width:auto; height:44px; background:url(assets/images/search.png); }
-#searchBar { width:700px; height:44px; margin:0 auto;}
+#searchBar { width:800px; height:auto; margin:0 auto;}
 #searchBar > div { float:left;}
 
 .vendor { display:none;}
 
 /*------register------*/
-#container { min-height: 600px; padding:20px 100px; }
+#container { min-height: 600px; }
+#registerdiv { min-height: 600px; padding:20px 100px; }
 
 #step{ width:626px; height:34px; margin:0 auto; background:url(assets/images/step.png) no-repeat;}
 #step > div{ display:table-cell; height:34px; width:313px; color:#FFF; font-weight:bold; vertical-align:middle; text-align:center; }
@@ -59,25 +65,25 @@
 <body>
 
 <div id="header">
-	<div id="banner">
-	<div id="home" style="height:70px; width:250px; position:relative; top:50px; left:100px; float:left"></div>
-		<form method="post">	
-        	<span style=" position:absolute; left:235px;"><input name="action" type="submit" value="Home"/></span>
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+  <div id="user_action" >
+		<form method="post">
+        	<span style=" float:left; margin-left:10px;"><input name="action" type="submit" value="Home"/></span>
 			{if !$session}
 				<input name="action" type="submit" value="Login" />
 				<input name="action" type="submit" value="Register" />	
 			{else}
             	{if ($session['user_id']==1)}
-                    <span class="glyphicon glyphicon-user">
+                    <span style="color:white" class="glyphicon glyphicon-user">
                         </span><input type="button" value="{$session['account_name']}" />
                     </span>
                     <input name="action" type="submit" value="Pending Orders" />  
                     <input name="action" type="submit" value="On-delivery Orders" />     	
                 {else}
                     <span id="user">
-                        <span class="glyphicon glyphicon-user">
+                        <span style="color:white" class="glyphicon glyphicon-user">
                             </span><input type="button" value="{$session['account_name']}" />
-                            <span class="caret"></span>
+                            <span style="color:white" class="caret"></span>
                         </span>
                     </span>
                     <span id="pw"><input class="btn btn-default" name="action" type="submit" value="Change Password" /></span>
@@ -88,10 +94,47 @@
                 <input name="action" type="submit" value="Logout" />
 			{/if}
 		</form>
+  </div>
+</nav>
+	<div id="banner">
+    <a href="ProductList.php" id="logo"></a>
+	<div id="searchBar">
+    <div class="row" style="padding:5px 0 5px 30px; margin-top:35px;">
+		<form name="condition" action="ProductList.php" method="get">
+        <div class="col-lg-6" style="width:700px;">
+            <div class="input-group">
+                <div id="categoryList" class="input-group-btn">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="text">All Product</span> <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                 	<li><a>All Product</a><input type="hidden" value="0"/></li>
+                    {foreach item=record from=$catagoryList}
+                    <li><a>{$record['name']}</a><input type="hidden" value="{$record['category_id']}"/></li>
+                    {/foreach}              	
+                  </ul>
+                </div>
+              <input name="category" type="hidden" value="{$category}" />
+              <input name="search" type="text" class="form-control" placeholder="Search" value="{$word}">
+              <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit"><span class="glyphicon glyphicon-search" style="margin-right:5px;"></span>Go</button>
+              </span>
+            </div>
+        </div>
+        </form>
+    </div>
+    <div class="vendor" style="padding:5px 0; margin-top:35px;">
+    	<form method="post">
+    		<button name="action" type="submit" class="btn btn-warning" value="Add Product">Add Product</button>
+        </form>
+    </div>
+    
+    </div>
     </div>
 </div>
 
-<div id="container">
+<div id="container"> 
+	<div style=" height:30px; background-color:#f6f6f6; border-bottom:3px solid #2e62ad; border-top:1px solid #f0f0f0;"></div>
+    <div id="registerdiv">
 	<div id="step">
     	<div>1. Personal Information</div>
         <div style="color:#6FBEFF">2. Compelete</div>
@@ -146,6 +189,7 @@
         <p>Thank you for registration.</p>
     </div>
 {/if}
+	</div>
 </div>
 
 <div id="footer">
@@ -192,9 +236,9 @@ var register_info = {
 	email: 'Please enter e-mail address',
 }
 function checkInput(name, errormsg){
-	$('input[name='+ name +']+span').remove();
-	if ($.trim($('input[name='+ name +']').val()) == "" ) {
-		$('input[name='+ name +']').after("<span class='warning'>"+ errormsg +"</span>");
+	$('#container input[name='+ name +']+span').remove();
+	if ($.trim($('#container input[name='+ name +']').val()) == "" ) {
+		$('#container input[name='+ name +']').after("<span class='warning'>"+ errormsg +"</span>");
 	}
 };
 $("input").blur(function(e){

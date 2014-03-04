@@ -14,26 +14,30 @@
 {literal} 
 <style>
 /*--------common---------*/
-#header input { color:#2154a8; font-size:14px; margin:20px 10px 0 0; }
-#banner { width: 1000px; height: 141px; margin: 0 auto; padding:0 12px; text-align:right; position:relative;
- background: url(assets/images/banner.png) no-repeat; }
-#home{ cursor:pointer;}
+body { background-color:#f3f3f3;}
+#logo{ background:url(assets/images/LOGO.png) no-repeat; background-size:80px; width:80px; height:80px;
+	 float:left; margin:15px 0 0 50px;}
+#user_action input { color:#FFFFFF; font-size:12px; font-weight:bold; margin:10px 10px 2px 0; }
+#banner { width: 1000px; height: 100px; margin: 0 auto; padding:0 12px; text-align:right;
+ background: url(assets/images/container.png) repeat-y; }
 #user { margin:20px 10px 0 0; cursor:pointer; }
 #user input { margin:0;  padding-right:0;}
-#pw{ background:#CCC; position:relative; float:left; top:40px; left:260px; display:none;}
+#pw{position:relative; float:left; top:32px; left:490px; display:none;}
 #pw input { color:#333; margin:0; padding:5px;}
 .bold{ font-weight:bold; }
-a { cursor:pointer; }
-.warning{ color:red; vertical-align:bottom; margin-left:5px;}
-#container { width: 1000px; min-height: 1515px; margin: 0 auto; padding:0 12px;
+a { cursor:pointer;}
+
+#header #categoryList ul li{ text-align:left;}
+.navbar-default { background-color: #3e7fdc; border-color: #336cbf;}
+#user_action{ width: 980px; margin: 0 auto; text-align:right; }
+#container { width: 1000px; min-height: 1515px; margin: 0 auto; padding:0 12px 10px 12px;
  background: url(assets/images/container.png) repeat-y; }
 
 #footer { width: 1000px; height: 80px; margin: 0 auto; padding:0 12px;
  background: url(assets/images/footer.png) repeat-y; }
-#footer p{ color:#666; font-size:12px; text-align:center; margin:20px 0;}
+#footer p{ color:#fff; font-size:12px; text-align:center; margin:20px 0;}
 
-#searchBackground { width:auto; height:44px; background:url(assets/images/search.png); }
-#searchBar { width:700px; height:44px; margin:0 auto;}
+#searchBar { width:800px; height:auto; margin:0 auto;}
 #searchBar > div { float:left;}
 
 .vendor { display:none;}
@@ -46,7 +50,7 @@ a { cursor:pointer; }
 #product_detail #big_group a:hover{ cursor:default; border:1px solid #DDDDDD;}
 
 /*----product pic-----*/
-.thumbnail { width:350px; height:340px; display:table-cell; vertical-align:middle; text-align:center; background-color:#F3F3F3 }
+.thumbnail { width:350px; height:340px; display:table-cell; vertical-align:middle; text-align:center; }
 .thumbnail img{ max-width:340px; max-height:330px; }
 #product_detail > div{ display:inline-block;}
 #smallpic_group{ height:330px;}
@@ -77,25 +81,25 @@ a { cursor:pointer; }
 <body>
 
 <div id="header">
-	<div id="banner">
-	<div id="home" style="height:70px; width:250px; position:relative; top:50px; left:100px; float:left"></div>
-		<form method="post">	
-        	<span style=" position:absolute; left:25px;"><input name="action" type="submit" value="Home"/></span>
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+  <div id="user_action" >
+		<form method="post">
+        	<span style=" float:left; margin-left:10px;"><input name="action" type="submit" value="Home"/></span>
 			{if !$session}
 				<input name="action" type="submit" value="Login" />
 				<input name="action" type="submit" value="Register" />	
 			{else}
             	{if ($session['user_id']==1)}
-                    <span class="glyphicon glyphicon-user">
+                    <span style="color:white" class="glyphicon glyphicon-user">
                         </span><input type="button" value="{$session['account_name']}" />
                     </span>
                     <input name="action" type="submit" value="Pending Orders" />  
                     <input name="action" type="submit" value="On-delivery Orders" />     	
                 {else}
                     <span id="user">
-                        <span class="glyphicon glyphicon-user">
+                        <span style="color:white" class="glyphicon glyphicon-user">
                             </span><input type="button" value="{$session['account_name']}" />
-                            <span class="caret"></span>
+                            <span style="color:white" class="caret"></span>
                         </span>
                     </span>
                     <span id="pw"><input class="btn btn-default" name="action" type="submit" value="Change Password" /></span>
@@ -106,25 +110,23 @@ a { cursor:pointer; }
                 <input name="action" type="submit" value="Logout" />
 			{/if}
 		</form>
-    </div>
-</div>
-
-<div id="container">
-	<form name="condition" action="ProductList.php" method="get">
-	<div id="searchBackground">
+  </div>
+</nav>
+	<div id="banner">
+    <a href="ProductList.php" id="logo"></a>
 	<div id="searchBar">
-    <div class="row" style="padding:5px 0;">
-        <div class="col-lg-6" style="width:700px">
+    <div class="row" style="padding:5px 0 5px 30px; margin-top:35px;">
+		<form name="condition" action="ProductList.php" method="get">
+        <div class="col-lg-6" style="width:700px;">
             <div class="input-group">
                 <div id="categoryList" class="input-group-btn">
-                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="text">Category List</span> <span class="caret"></span>
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="text">All Product</span> <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu" role="menu">
+                 	<li><a>All Product</a><input type="hidden" value="0"/></li>
                     {foreach item=record from=$catagoryList}
                     <li><a>{$record['name']}</a><input type="hidden" value="{$record['category_id']}"/></li>
-                    {/foreach}
-                    <li class="divider"></li>
-                    <li><a>All product</a><input type="hidden" value="0"/></li>
+                    {/foreach}              	
                   </ul>
                 </div>
               <input name="category" type="hidden" value="{$category}" />
@@ -134,10 +136,20 @@ a { cursor:pointer; }
               </span>
             </div>
         </div>
-    </div>   
+        </form>
+    </div>
+    <div class="vendor" style="padding:5px 0; margin-top:35px;">
+    	<form method="post">
+    		<button name="action" type="submit" class="btn btn-warning" value="Add Product">Add Product</button>
+        </form>
+    </div>
+    
     </div>
     </div>
-    </form>
+</div>
+
+<div id="container">
+	<div style=" height:30px; background-color:#f6f6f6; border-bottom:3px solid #2e62ad; border-top:1px solid #f0f0f0;"></div>
     <form id="productForm" method="post">
     {if $productDetailList}
     <input name="book_id" type="hidden" value="{$productDetailList['book_id']}"/>
@@ -301,11 +313,11 @@ a { cursor:pointer; }
                               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="text">{$productDetailList['language']}</span> <span class="caret"></span>
                               </button>
                               <ul class="dropdown-menu" role="menu">
-                                <li><a>English</a></li>
-                                <li><a>Chinese</a></li>
-                                <li><a>Japanese</a></li>
+                                {foreach item=record from=$languageList}
+                                <li><a>{$record['name']}</a><input type="hidden" value="{$record['language_id']}"/></li>
+                                {/foreach}
                               </ul>
-                            </div><input name="language" type="hidden" value="{$productDetailList['language']}" />
+                            </div><input name="language" type="hidden" value="{$productDetailList['language_id']}" />
                             </p>
                          </td>
                     </tr>
@@ -396,8 +408,12 @@ $('img').each(function(index, element) {
 });
 
 /*picture group*/
+var clicke = 0;
+var bigpic = $('#big_pic').attr('src');
 $('.smallpic').click(function(e){
+	clicke = 1;
 	$('#big_pic').attr('src', $(this).find('img').attr('src'));
+	bigpic = $('#big_pic').attr('src');
 	$('.smallpic').removeClass('pic_focus');
 	$(this).addClass('pic_focus');
 	
@@ -406,7 +422,28 @@ $('.smallpic').click(function(e){
 	}else{
 		$('#big_pic').css('width','100%');
 	}
+})
+$('.smallpic').hover(function(e){
+	$('#big_pic').attr('src', $(this).find('img').attr('src'));
 	
+	if ($(this).find('img').width() <= $(this).find('img').height()){
+		$('#big_pic').css('width','auto');
+	}else{
+		$('#big_pic').css('width','100%');
+	}
+})
+$('#smallpic_group').mouseleave(function(e){
+	if(clicke !=1){
+		$('#big_pic').attr('src', bigpic);
+		
+		if ($(this).find('img').width() <= $(this).find('img').height()){
+			$('#big_pic').css('width','auto');
+		}else{
+			$('#big_pic').css('width','100%');
+		}
+	}else{
+		clicke = 0;
+	}
 })
 
 /*dropdown list*/
@@ -422,7 +459,7 @@ $('#product_info #categoryList ul li').click(function(){
 
 $('#languageList ul li').click(function(){
 	$('#languageList button .text').text($(this).find('a').text());
-	$("input[name='language']").val($(this).find('a').text());
+	$("input[name='language']").val($(this).find('input').val());
 })
 
 

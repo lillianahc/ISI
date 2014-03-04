@@ -14,47 +14,55 @@
 {literal} 
 <style>
 /*--------common---------*/
-#header input { color:#2154a8; font-size:14px; margin:20px 10px 0 0; }
-#banner { width: 1000px; height: 141px; margin: 0 auto; padding:0 12px; text-align:right;
- background: url(assets/images/banner.png) no-repeat; }
-#home{ cursor:pointer;}
+body { background-color:#f3f3f3;}
+#logo{ background:url(assets/images/LOGO.png) no-repeat; background-size:80px; width:80px; height:80px;
+	 float:left; margin:15px 0 0 50px;}
+#user_action input { color:#FFFFFF; font-size:12px; font-weight:bold; margin:10px 10px 2px 0; }
+#banner { width: 1000px; height: 100px; margin: 0 auto; padding:0 12px; text-align:right;
+ background: url(assets/images/container.png) repeat-y; }
 #user { margin:20px 10px 0 0; cursor:pointer; }
 #user input { margin:0;  padding-right:0;}
-#pw{ background:#CCC; position:relative; float:left; top:40px; left:260px; display:none;}
+#pw{position:relative; float:left; top:32px; left:490px; display:none;}
 #pw input { color:#333; margin:0; padding:5px;}
 .bold{ font-weight:bold; }
 a { cursor:pointer;}
 
+#header #categoryList ul li{ text-align:left;}
+.navbar-default { background-color: #3e7fdc; border-color: #336cbf;}
+#user_action{ width: 980px; margin: 0 auto; text-align:right; }
 #container { width: 1000px; min-height: 1515px; margin: 0 auto; padding:0 12px 10px 12px;
  background: url(assets/images/container.png) repeat-y; }
 
 #footer { width: 1000px; height: 80px; margin: 0 auto; padding:0 12px;
  background: url(assets/images/footer.png) repeat-y; }
-#footer p{ color:#666; font-size:12px; text-align:center; margin:20px 0;}
+#footer p{ color:#fff; font-size:12px; text-align:center; margin:20px 0;}
 
-#searchBackground { width:auto; height:44px; background:url(assets/images/search.png); }
-#searchBar { width:700px; height:44px; margin:0 auto;}
+#searchBar { width:800px; height:auto; margin:0 auto;}
 #searchBar > div { float:left;}
 
 .vendor { display:none;}
 
 /*----------price sort-------------*/
 #sort { height:30px; background-color:#f2f2f2; border-bottom:1px solid #CCC; border-top:1px solid #CCC;}
-#sort table tr td { padding:0 13px; line-height:28px; text-align:center; border-right:1px solid #CCC;}
+#sort table:first-child{ float:right;}
+#sort table tr td { padding:0 13px; line-height:28px; text-align:center;}
+#sort table:first-child tr td { border-left:1px solid #CCC;}
+#sort .catagory_focus{ border-bottom:3px solid #2e62ad;}
 table tr td:hover { background-color:#FFF; cursor:pointer;}
+table#categoryTable tr td:hover { border-bottom:3px solid #2e62ad;}
 table tr td:active { background-color:#DFDFDF; cursor:pointer;}
 
 /*----------product-----------*/
-#product { width:976px; height:1700px; padding:20px 5px 10px 5px;}
+#product { width:976px; height:1720px; padding:30px 10px 10px;}
 #product > div { font-size:12px; width:25%; margin-bottom:25px; }
 #product a {color:#333}
 #product a:hover {color:#39F;}
 
-.thumbnail { width:210px; height:200px; display:table-cell; vertical-align:middle; text-align:center; background-color:#F3F3F3 }
+.thumbnail { width:210px; height:200px; display:table-cell; vertical-align:middle; text-align:center; }
 .thumbnail img{ max-width:200px; max-height:190px; }
 #product .category { position:absolute; bottom:0;}
 #product .price { font-size:16px; float:right}
-#product .product_name { height:30px; margin:0;}
+#product .product_name { min-height:35px; margin:0;}
 
 /*----------paging------------*/
 #paging div{ text-align: center; height:50px;}
@@ -64,25 +72,25 @@ table tr td:active { background-color:#DFDFDF; cursor:pointer;}
 <body>
 
 <div id="header">
-	<div id="banner">
-	<div id="home" style="height:70px; width:250px; position:relative; top:50px; left:100px; float:left"></div>
-		<form method="post">	
-        	<span style=" position:absolute; left:235px;"><input name="action" type="submit" value="Home"/></span>
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+  <div id="user_action" >
+		<form method="post">
+        	<span style=" float:left; margin-left:10px;"><input name="action" type="submit" value="Home"/></span>
 			{if !$session}
 				<input name="action" type="submit" value="Login" />
 				<input name="action" type="submit" value="Register" />	
 			{else}
             	{if ($session['user_id']==1)}
-                    <span class="glyphicon glyphicon-user">
+                    <span style="color:white" class="glyphicon glyphicon-user">
                         </span><input type="button" value="{$session['account_name']}" />
                     </span>
                     <input name="action" type="submit" value="Pending Orders" />  
                     <input name="action" type="submit" value="On-delivery Orders" />     	
                 {else}
                     <span id="user">
-                        <span class="glyphicon glyphicon-user">
+                        <span style="color:white" class="glyphicon glyphicon-user">
                             </span><input type="button" value="{$session['account_name']}" />
-                            <span class="caret"></span>
+                            <span style="color:white" class="caret"></span>
                         </span>
                     </span>
                     <span id="pw"><input class="btn btn-default" name="action" type="submit" value="Change Password" /></span>
@@ -93,28 +101,23 @@ table tr td:active { background-color:#DFDFDF; cursor:pointer;}
                 <input name="action" type="submit" value="Logout" />
 			{/if}
 		</form>
-    </div>
-</div>
-
-
-
-
-<div id="container">
-	<div id="searchBackground">
+  </div>
+</nav>
+	<div id="banner">
+    <a href="ProductList.php" id="logo"></a>
 	<div id="searchBar">
-    <div class="row" style="padding:5px 0;">
+    <div class="row" style="padding:5px 0 5px 30px; margin-top:35px;">
 		<form name="condition" method="get">
-        <div class="col-lg-6" style="width:700px">
+        <div class="col-lg-6" style="width:700px;">
             <div class="input-group">
                 <div id="categoryList" class="input-group-btn">
-                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="text">Category List</span> <span class="caret"></span>
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="text">All Product</span> <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu" role="menu">
+                 	<li><a>All Product</a><input type="hidden" value="0"/></li>
                     {foreach item=record from=$catagoryList}
                     <li><a>{$record['name']}</a><input type="hidden" value="{$record['category_id']}"/></li>
                     {/foreach}              	
-                    <li class="divider"></li>
-                    <li><a>All product</a><input type="hidden" value="0"/></li>
                   </ul>
                 </div>
               <input name="category" type="hidden" value="{$category}" />
@@ -126,7 +129,7 @@ table tr td:active { background-color:#DFDFDF; cursor:pointer;}
         </div>
         </form>
     </div>
-    <div class="vendor" style="padding:5px 0;">
+    <div class="vendor" style="padding:5px 0; margin-top:35px;">
     	<form method="post">
     		<button name="action" type="submit" class="btn btn-warning" value="Add Product">Add Product</button>
         </form>
@@ -134,6 +137,12 @@ table tr td:active { background-color:#DFDFDF; cursor:pointer;}
     
     </div>
     </div>
+</div>
+
+
+
+
+<div id="container">
     <form name="pricesort" method="get">
      	<input name="category" type="hidden" value="{$category}" />
      	<input name="search" type="hidden" value="{$word}">
@@ -145,6 +154,14 @@ table tr td:active { background-color:#DFDFDF; cursor:pointer;}
             <div class="sort" style="background:url(assets/images/sort.png) no-repeat; background-position:0 0; height:9px; width:7px; display:inline-block;"></div>
             </td>
             <input name="sort" type="hidden" value="{$pricesort}">
+        </tr>
+    </table>
+    <table id="categoryTable">
+    	<tr>
+        	<td class="catagory_focus">All Product<input type="hidden" value="0"/></td>
+            {foreach item=record from=$catagoryList}
+            <td>{$record['name']}<input type="hidden" value="{$record['category_id']}"/></td>
+        	{/foreach}
         </tr>
     </table>
     </div>
@@ -209,6 +226,13 @@ table tr td:active { background-color:#DFDFDF; cursor:pointer;}
 {literal} 
 <script language="javascript">
 $(document).ready(function(){
+/*category table*/	
+
+	var num = $('input[name=category]').val();;
+	$('table#categoryTable tr td').removeClass('catagory_focus');
+	$('table#categoryTable tr td').eq(num).addClass('catagory_focus');
+
+
 /*paging*/
 $('#paging ul li').each(function(index, element) {
 	if ($(element).has('a').text() == $('#paging input[name=page]').val()){
@@ -266,18 +290,18 @@ $('#pw').mouseleave(function(e){
 });
 
 /*sort*/
-$('table tr td').click(function(e){
-	$('table tr td').css('background-color','#f2f2f2');
+$('table:first-child tr td').click(function(e){
+	$('table:first-child tr td').css('background-color','#f2f2f2');
 	$(this).css('background-color','white');
 })
 
-$('table tr td:first-child').click(function(e){
+$('table:first-child tr td:first-child').click(function(e){
 	$('table tr td div').css('background-position','0px 0px');
 	$('input[name=sort]').val('book_name');
 	pricesort.submit();
 })
  
-$('table tr td').has("div").click(function(e){
+$('table:first-child tr td').has("div").click(function(e){
 	var sortpo = $('table tr td div');
 	if (sortpo.css('background-position') == ('0px 0px') || sortpo.css('background-position') == '-16px 0px'){
 		sortpo.css('background-position','-8px 0px'); 
@@ -290,15 +314,21 @@ $('table tr td').has("div").click(function(e){
 })
 
 if ($('input[name=sort]').val() == 'ASC'){
-	$('table tr td div').css('background-position','-8px 0px'); 
-	$('table tr td').has("div").css('background-color','white');
+	$('table:first-child tr td div').css('background-position','-8px 0px'); 
+	$('table:first-child tr td').has("div").css('background-color','white');
 }else if ($('input[name=sort]').val() == 'DESC'){
-	$('table tr td div').css('background-position','-16px 0px');
-	$('table tr td').has("div").css('background-color','white');
+	$('table:first-child tr td div').css('background-position','-16px 0px');
+	$('table:first-child tr td').has("div").css('background-color','white');
 }else if ($('input[name=sort]').val() == 'book_name'){
-	$('table tr td:first-child').css('background-color','white');
+	$('table:first-child tr td:first-child').css('background-color','white');
 }
 
+$('table#categoryTable tr td').click(function(e){
+	$('table#categoryTable tr td').removeClass('catagory_focus');
+	$(this).addClass('catagory_focus');
+	$('input[name=category]').val($(this).find('input').val());
+	pricesort.submit();
+})
 
 /*img size*/
 $('img').each(function(index, element) {
