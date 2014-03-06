@@ -13,7 +13,7 @@ try {
 		$del_id = mysql_real_escape_string( trim($_POST['del_id']));
 		$query = "DELETE FROM `shopping_cart` WHERE `user_id`=$_SESSION[user_id] AND `book_id`=$del_id";
 		if ($base->query($query)){
-			$success = "Product has removed successfully";
+			$success = "Product successfully removed";
 		}
 	}
 	
@@ -39,10 +39,13 @@ try {
 		$query = "DELETE FROM `shopping_cart` WHERE `user_id`=$_SESSION[user_id]";
 		$base->query($query);
 		if ($base->query($query)){
-			$success = "You are successfully to add a order";
+			$success = "The order is created successfully";
 		}
 	}
 	
+	$query = "SELECT * FROM `category`";
+	$catagoryList = $base->list_result($query);
+		
 	$query = "SELECT sc.`book_id`, sc.`qty`, b.`book_name`, b.`price`, i.`type`, i.`name` AS thumbnail
 			FROM `shopping_cart` sc INNER JOIN `book` b ON sc.`book_id`=b.`book_id`
 			INNER JOIN `book_image` bi ON bi.`book_id`=b.`book_id`
@@ -53,7 +56,7 @@ try {
 	$query = "SELECT SUM(sc.`qty`*b.`price`) AS total
 			FROM `shopping_cart` sc INNER JOIN `book` b ON sc.`book_id`=b.`book_id` WHERE sc.`user_id`=$_SESSION[user_id]";
 	$totalprice = $base->get($query);
-	
+	mysql_close($con);
 	
 }catch (Exception $e){
 	echo 'Exception: ',  $e->getMessage(), "\n";
@@ -61,6 +64,7 @@ try {
 
 $smarty->assign('success',$success);
 $smarty->assign('totalprice',$totalprice['total']);
+$smarty->assign('catagoryList',$catagoryList);
 $smarty->assign('cartList',$cartList);
 $smarty->display('ShoppingCart.html');
 ?>

@@ -140,17 +140,17 @@ a { cursor:pointer;}
     </div>
     <div class="panel panel-info">
         <div style="font-weight:bold; text-align:right;" class="panel-heading">    
-            <span>Total Cost: ${if $totalcost}{$totalcost}{else}0.00{/if}</span>
+            <span>Total Order Amount: ${if $totalcost}{$totalcost}{else}0.00{/if}</span>
         </div>
         <div class="panel-body">
             <table class="table table-hover" style="word-break: break-all;">
                 <thead>
                     <tr>
-                        <th width="15%">Order No.</th>
+                        <th width="14%">Order No.</th>
                         <th width="20%">Status</th>
-                        <th width="25%">Purchase date</th>
-                        <th width="25%">Customer</th>
-                        <th width="15%">Subtotal</th>
+                        <th width="23%">Purchase Date</th>
+                        <th width="23%">Customer</th>
+                        <th width="20%">Order Amount</th>
                     </tr>
                 </thead>   
                 <tbody class="table-hover">
@@ -210,12 +210,18 @@ $('#pw').mouseleave(function(e){
 	$('#pw').css('display','none');
 });
 
+/*dropdown list*/
+$('#searchBar #categoryList ul li').click(function(){
+	$('#searchBar #categoryList button .text').text($(this).find('a').text());
+	$("#searchBar input[name='category']").val($(this).find('input').val());
+})
+
 /*go to productlist page*/
 $('#home').click(function(e){
 	document.location.href="ProductList.php";
 })
 
-$('#container table tr').click(function(e){
+$('#container table tbody tr').click(function(e){
 	$('input[name=order_id]').val($(this).find('.order_id').text());
 	toOrderDetail.submit();
 })

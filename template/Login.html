@@ -185,6 +185,12 @@ $('#pw').mouseleave(function(e){
 	$('#pw').css('display','none');
 });
 
+/*dropdown list*/
+$('#searchBar #categoryList ul li').click(function(){
+	$('#searchBar #categoryList button .text').text($(this).find('a').text());
+	$("#searchBar input[name='category']").val($(this).find('input').val());
+})
+
 $(document).ready(function(){
 /*checking*/
 $("input[name='userName']").focus(function(e){

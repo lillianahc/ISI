@@ -44,7 +44,7 @@ try {
 		$paging_info = $base->paging($sql_count, $per);
 		$productList = array();
 		if ($paging_info['pages'] <= 0){
-			$error = 'Your search "'.$word.'" match any documents';
+			$error = 'Your search "'.$word.'" does not match any products';
 		}else{
 			$productList = $base->list_result($query_s, $paging_info['start'], $per);
 		} 

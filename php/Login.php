@@ -24,15 +24,18 @@ try {
 			}else{
 				$error = "Login ID or Password incorrect.";
 			}
-			mysql_close($con);
 		}
 	}
-
+	
+	$query = "SELECT * FROM `category`";
+	$catagoryList = $base->list_result($query);
+	mysql_close($con);
+	
 }catch (Exception $e){
 	echo 'Exception: ',  $e->getMessage(), "\n";
 }
 
-
+$smarty->assign('catagoryList',$catagoryList);
 $smarty->assign('error',$error);
 $smarty->display('Login.html');
 ?>

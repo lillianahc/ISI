@@ -11,6 +11,9 @@ if ($_SESSION['user_id'] != 1){
 try {
 	$query = "SELECT * FROM `category`";
 	$catagoryList = $base->list_result($query);
+
+	$query = "SELECT * FROM `language`";
+	$languageList = $base->list_result($query);
 	
 	if($_POST['addProduct']){
 		$productName = mysql_real_escape_string( trim($_POST['productName']));
@@ -55,7 +58,7 @@ try {
 		}
 		
 		//insert new product
-		$query = "INSERT INTO `book`(`book_name`, `category_id`, `price`, `language`, `pages`, `releaseDate`, `ISBN`, `description`, `publisher_id`, `author_id`)
+		$query = "INSERT INTO `book`(`book_name`, `category_id`, `price`, `language_id`, `pages`, `releaseDate`, `ISBN`, `description`, `publisher_id`, `author_id`)
 				VALUES ('$productName',$category,'$price','$language','$pages','$ReleaseDate','$ISBN','$otherDes',$publisherid,$authorsid)";
 		$base->query($query);
 		$bookid = mysql_insert_id();
@@ -87,7 +90,7 @@ try {
 		
 		$query = "INSERT INTO `book_image`(`book_id`, `image_id`, `thumbnail`) VALUES ($bookid,$imageid,1)";
 		$base->query($query);
-		$success = "successfully add a new product";
+		$success = "Product successfully added to PRODUCT LIST";
 		
 	}
 
@@ -99,6 +102,7 @@ try {
 
 
 $smarty->assign('success',$success);
+$smarty->assign('languageList',$languageList);
 $smarty->assign('catagoryList',$catagoryList);
 $smarty->display('AddProduct.html');
 ?>

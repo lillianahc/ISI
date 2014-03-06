@@ -138,19 +138,19 @@ a { cursor:pointer;}
         <span> > On-delivery Orders</span>
     </div>
     <div class="panel panel-info">
-        <div style="font-weight:bold" class="panel-heading">
-            <span style="text-align:left;">On-delivery Orders</span>       
-            <span style=" float:right;">Total Cost: ${if $totalcost}{$totalcost}{else}0.00{/if}</span>
+        <div style="font-weight:bold; text-align:right;" class="panel-heading">     
+            <span>Total Order Amount: ${if $totalcost}{$totalcost}{else}0.00{/if}</span>
         </div>
         <div class="panel-body">
             <table class="table table-hover" style="word-break: break-all;">
                 <thead>
                 <tr>
                     <th width="12%">Order No.</th>
-                    <th width="20%">Status</th>
-                    <th width="22%">Purchase date</th>
-                    <th width="22%">Shipment date</th>
-                    <th width="24%">Customer</th>
+                    <th width="14%">Status</th>
+                    <th width="19%">Purchase Date</th>
+                    <th width="19%">Shipment Date</th>
+                    <th width="18%">Customer</th>
+                    <th width="18%">Order Amount</th>
                 </tr>
                 </thead>   
                 <tbody class="table-hover">
@@ -162,6 +162,7 @@ a { cursor:pointer;}
                         <td>{$record['purchase_date']}</td>
                         <td>{$record['shipment_date']}</td>
                         <td>{$record['first_name']} {$record['last_name']}</td>
+                        <td>{$record['subtotal']}</td>
                     </tr>
                     {/foreach}
                 {else}
@@ -206,6 +207,12 @@ $('input[name=action]').hover(function(e){
 $('#pw').mouseleave(function(e){
 	$('#pw').css('display','none');
 });
+
+/*dropdown list*/
+$('#searchBar #categoryList ul li').click(function(){
+	$('#searchBar #categoryList button .text').text($(this).find('a').text());
+	$("#searchBar input[name='category']").val($(this).find('input').val());
+})
 
 /*go to productlist page*/
 $('#home').click(function(e){

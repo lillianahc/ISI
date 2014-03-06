@@ -168,7 +168,7 @@ a { cursor:pointer;}
     <div class="panel panel-info">
         <div style="font-weight:bold" class="panel-heading">
             <span style="text-align:left;">Order No: {$orderinfo['order_id']}</span>  
-            <span style=" float:right;">Total Cost: ${$totalcost}</span>
+            <span style=" float:right;">Total Order Amount: ${$totalcost}</span>
         </div>
         <div class="panel-body">
             <div class="panel panel-default">
@@ -185,10 +185,10 @@ a { cursor:pointer;}
             <table class="table table-hover" style="word-break: break-all;">
                 <thead>
                 <tr>
-                    <th width="60%">Product Name</th>
+                    <th width="58%">Product Name</th>
                     <th width="13%">Price</th>
                     <th width="14%" class="qty">Quantity</th>
-                    <th width="13%">Subtotal</th>
+                    <th width="15%">Order Amount</th>
                 </tr>
                 </thead>   
                 <tbody class="table-hover">
@@ -210,7 +210,7 @@ a { cursor:pointer;}
      <input name="receipt" type="hidden" value="{$orderinfo['order_id']}" />
      <input name="handle" type="hidden" value="" />
      
-     <input class="btn btn-success" type="button" value="Receipt" onclick="msg('receiptForm', 'Receipt')" />
+     <input class="btn btn-success" type="button" value="Confirm Receipt" onclick="msg('receiptForm', 'Receipt')" />
     </div>
     </form>
     {/if}
@@ -238,15 +238,15 @@ a { cursor:pointer;}
     
     {if $session['user_id']==1 && ($orderinfo['status']=='pending' || $orderinfo['status']=='hold' )}
     <form id="handleForm" method="post">
-    <div style="text-align:right; padding-right:20px;">
+    <div style="text-align:right; padding-right:0px;">
      <input name="handle_order" type="hidden" value="{$orderinfo['order_id']}" />
      <input name="handle" type="hidden" value="" />
      
-     <input style="margin-right:10px" class="btn btn-success" type="button" value="Ship" onclick="msg('handleForm', 'Ship')" />
+     <input style="margin-right:10px" class="btn btn-success" type="button" value="Ship Order" onclick="msg('handleForm', 'Ship')" />
      {if $orderinfo['status']!='hold'}
-     <input style="margin-right:10px" class="btn btn-warning" type="button" value="Hold" onclick="msg('handleForm', 'Hold')" />
+     <input style="margin-right:10px" class="btn btn-warning" type="button" value="Hold Order" onclick="msg('handleForm', 'Hold')" />
      {/if}
-     <input style="margin-right:10px" class="btn btn-danger" type="button" value="Cancel" onclick="msg('handleForm', 'Cancel')" />
+     <input style="margin-right:0px" class="btn btn-danger" type="button" value="Cancel Order" onclick="msg('handleForm', 'Cancel')" />
     </div>
     </form>
     {/if}
@@ -265,7 +265,7 @@ a { cursor:pointer;}
 {if $orderinfo['status']=='hold'}
 <script language="javascript">
 $(document).ready(function(){
-	$('#handleForm input[value=Ship]').val("Unhold and Ship");
+	$('#handleForm input[value="Ship Order"]').val("Unhold and Ship Order");
 })
 </script>
 {/if}
@@ -342,7 +342,11 @@ $('#pw').mouseleave(function(e){
 	$('#pw').css('display','none');
 });
 
-
+/*dropdown list*/
+$('#searchBar #categoryList ul li').click(function(){
+	$('#searchBar #categoryList button .text').text($(this).find('a').text());
+	$("#searchBar input[name='category']").val($(this).find('input').val());
+})
 })
 </script>
 {/literal} 

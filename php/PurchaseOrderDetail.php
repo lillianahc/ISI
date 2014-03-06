@@ -19,14 +19,14 @@ try {
 		$order_id = mysql_real_escape_string( trim($_POST['handle_order']));
 		
 		switch ($_POST['handle']){
-			case 'Ship':
-			case 'Unhold and Ship':
+			case 'Ship Order':
+			case 'Unhold and Ship Order':
 				$shipment_date = date("Y-m-d");
 				$query = "UPDATE `order` SET `shipment_date`='$shipment_date',`status`='shipped' WHERE `order_id`=$order_id";
 				$base->query($query);
 				break;	
 			
-			case 'Hold':
+			case 'Hold Order':
 				$query = "SELECT * FROM `order` WHERE `order_id`=$order_id AND `status`='pending'";
 				$row = $base->get($query);
 				if ($row){
@@ -34,7 +34,7 @@ try {
 					$base->query($query);
 				}
 				break;	
-			case 'Cancel':
+			case 'Cancel Order':
 				$query = "UPDATE `order` SET `status`='cancelled' WHERE `order_id`=$order_id ";
 				$base->query($query);
 				break;
@@ -62,7 +62,9 @@ try {
 			}
 		}
 
-	
+		$query = "SELECT * FROM `category`";
+		$catagoryList = $base->list_result($query);
+		
 		$query = "SELECT od.*, b.`book_name`, b.`price`, (b.`price`*od.`qty`) AS subtotal FROM `order_detail` od 
 				INNER JOIN `order` o ON od.`order_id`=o.`order_id`
         		INNER JOIN `book` b ON b.`book_id`=od.`book_id` WHERE od.`order_id`=$order_id";
@@ -81,6 +83,8 @@ try {
 			$userinfo = $_SESSION;
 		}
 	}
+	mysql_close($con);
+	
 }catch (Exception $e){
 	echo 'Exception: ',  $e->getMessage(), "\n";
 }
@@ -88,6 +92,7 @@ try {
 
 $smarty->assign('userinfo',$userinfo);
 $smarty->assign('orderinfo',$orderinfo);
+$smarty->assign('catagoryList',$catagoryList);
 $smarty->assign('orderDetailList',$orderDetailList);
 $smarty->assign('totalcost',$totalcost['totalcost']);
 $smarty->display('PurchaseOrderDetail.html');

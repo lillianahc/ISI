@@ -9,8 +9,10 @@ if ($_SESSION['user_id'] != 1){
 }
 
 try {
-
-	 $query = "SELECT o.`order_id`, SUM(b.`price`*od.`qty`) AS subtotal , o.`purchase_date`, o.`status`, u.`user_id`, u.`first_name`, u.`last_name`
+	$query = "SELECT * FROM `category`";
+	$catagoryList = $base->list_result($query);
+	
+	$query = "SELECT o.`order_id`, SUM(b.`price`*od.`qty`) AS subtotal , o.`purchase_date`, o.`status`, u.`user_id`, u.`first_name`, u.`last_name`
 			FROM `order` o INNER JOIN `order_detail` od ON o.`order_id`=od.`order_id`
 			INNER JOIN `user` u ON o.`user_id`=u.`user_id` INNER JOIN `book` b ON od.`book_id`=b.`book_id`
 			WHERE o.`status` IN ('pending','hold') GROUP BY od.`order_id` ORDER BY o.`order_id`";
@@ -30,6 +32,7 @@ try {
 }
 
 
+$smarty->assign('catagoryList',$catagoryList);
 $smarty->assign('OrdersList',$OrdersList);
 $smarty->assign('totalcost',$totalcost['total']);
 $smarty->display('PendingOrders.html');

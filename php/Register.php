@@ -39,23 +39,32 @@ try {
 				$query = "INSERT INTO user(account_name, password, first_name, last_name, email, shipping_address)
 				 		VALUES ('$userName','$password','$firstName','$lastName','$email', '$shipAddress')";
 				if($base->query($query)){
-				 	$success = "Register successful!";
+				 	$query = "SELECT * FROM user WHERE account_name='$userName' and password='$password'";
+				 	$row = $base->get($query);
+				 	if ($row){
+				 		$_SESSION = $row;
+				 		$success = "Register Successful";
+				 		header("Location: ProductList.php", true, 200);
+				 		exit;
+				 	}
 				}
 			}
-			mysql_close($con);
+
 		}
-		
-		$user_info = array( 'firstName'=>$firstName, 'lastName'=>$lastName, 'userName'=>$userName, 
-							'password'=>$confirm, 'email'=>$email, 'shipAddress'=>$shipAddress );
 
 	}
 
+	$query = "SELECT * FROM `category`";
+	$catagoryList = $base->list_result($query);
+	mysql_close($con);
+		
 }catch (Exception $e){
 	echo 'Exception: ',  $e->getMessage(), "\n";
 }
 
+$smarty->assign('session',$_SESSION);
 $smarty->assign('success',$success);
 $smarty->assign('error',$error);
-$smarty->assign('user_info',$user_info);
+$smarty->assign('catagoryList',$catagoryList);
 $smarty->display('Register.html');
 ?>

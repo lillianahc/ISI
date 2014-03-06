@@ -46,8 +46,8 @@ a { cursor:pointer;}
 #container { min-height: 800px; }
 #productdiv { min-height: 800px; padding:20px 100px; }
 
-#step{ width:626px; height:34px; margin:0 auto; background:url(assets/images/step.png) no-repeat;}
-#step > div{ display:table-cell; height:34px; width:313px; color:#FFF; font-weight:bold; vertical-align:middle; text-align:center; }
+#step{ width:588px; height:42px; margin:0 auto; background:url(assets/images/step.jpg) no-repeat;}
+#step > div{ display:table-cell; height:40px; width:313px; font-weight:bold; vertical-align:middle; text-align:center; }
 	
 #addproduct { width:600px; margin:0 auto;}
 #addproduct tr td{ height:45px; padding-left:5px;}
@@ -144,8 +144,8 @@ a { cursor:pointer;}
 	<div style=" height:30px; background-color:#f6f6f6; border-bottom:3px solid #2e62ad; border-top:1px solid #f0f0f0;"></div>
     <div id="productdiv">
 	<div id="step">
-    	<div>1. Fill-in Product Information</div>
-        <div style="color:#6FBEFF">2. Compelete</div>
+    	<div style="color:#06C">1. Fill-in Product Information</div>
+        <div style="color:#999">2. Complete</div>
     </div>
     <form id="addproductForm" method="post" enctype="multipart/form-data">
     <div style="height:660px;">
@@ -243,6 +243,7 @@ a { cursor:pointer;}
     </table>
     </div>
     <div style="width:600px; margin:0 auto; text-align:right; ">
+    	<span style="color:red; float:left; margin-left:30px; line-height:50px;">* Mandatory</span>
 		<button style="margin-right:15px" name="addProduct" value="addProduct" type="submit" class="btn btn-info">Submit</button>
 		<button name="reset" type="button" class="btn btn-default">Reset</button>
     </div>
@@ -261,15 +262,6 @@ a { cursor:pointer;}
     </div>
 </div>
 
-{if $success}
-<script language="javascript">
-		$('#step').css('background-position','0px -34px');
-		$('#step div').eq(0).css('color','#6FBEFF');	
-		$('#step div').eq(1).css('color','#FFF');
-		$('#addproductForm').css('display','none');
-		$('#complete').css('display','block');
-</script>
-{/if}
 
 {if ($session['user_id']==1)}
 <script language="javascript">
@@ -322,9 +314,9 @@ var product_info = {
 	pages: 'Please enter pages'
 }
 function checkInput(name, errormsg){
-	$('input[name='+ name +']+span').remove();
-	if ($.trim($('input[name='+ name +']').val()) == "" ) {
-		$('input[name='+ name +']').after("<span class='warning'>"+ errormsg +"</span>");
+	$('#container input[name='+ name +']+span').remove();
+	if ($.trim($('#container input[name='+ name +']').val()) == "" ) {
+		$('#container input[name='+ name +']').after("<span class='warning'>"+ errormsg +"</span>");
 	}
 };
 
@@ -374,7 +366,7 @@ $("input[name='ISBN']").blur(function(e){
 $("input[name='ReleaseDate']").blur(function(e){
 	if ($.trim($("input[name='ReleaseDate']").val()) != "" ){
 		$("input[name='ReleaseDate']+span").remove();	
-		var date = /^\d{4}\-[01]?[0-2]\-([0-2]?[0-9]|[3][01])$/;
+		var date = /^([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-9])))$/;
 		if (!date.test($.trim($("input[name='ReleaseDate']").val()))){
 			$(this).after("<span class='warning'>Invalid date format.</span>");			
 		}
@@ -398,15 +390,15 @@ $("input[name='pages']").blur(function(e){
 });
 
 /*dropdown list*/
-$('#categoryList ul li').click(function(){
-	$('#categoryList button .text').text($(this).find('a').text());
-	$("input[name='category']").val($(this).find('input').val());
+$('#container #categoryList ul li').click(function(){
+	$('#container #categoryList button .text').text($(this).find('a').text());
+	$("#container input[name='category']").val($(this).find('input').val());
 	checkInput('category', product_info['category']);
 })
 
-$('#languageList ul li').click(function(){
-	$('#languageList button .text').text($(this).find('a').text());
-	$("input[name='language']").val($(this).find('input').val());
+$('#container #languageList ul li').click(function(){
+	$('#container #languageList button .text').text($(this).find('a').text());
+	$("#container input[name='language']").val($(this).find('input').val());
 	checkInput('language', product_info['language']);
 })
 

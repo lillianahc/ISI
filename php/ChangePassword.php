@@ -36,17 +36,20 @@ try {
 					$success = "Changing password successful!";
 				}
 			}
-			mysql_close($con);
 		}
 		
 	}
-
+	
+	$query = "SELECT * FROM `category`";
+	$catagoryList = $base->list_result($query);
+	mysql_close($con);
+	
 }catch (Exception $e){
 	echo 'Exception: ',  $e->getMessage(), "\n";
 }
 
 $smarty->assign('success',$success);
 $smarty->assign('error',$error);
-$smarty->assign('newPassword',$confirm);
+$smarty->assign('catagoryList',$catagoryList);
 $smarty->display('ChangePassword.html');
 ?>

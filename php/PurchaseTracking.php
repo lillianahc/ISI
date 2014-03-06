@@ -17,12 +17,15 @@ try {
 			GROUP BY o.`order_id` ORDER BY o.`order_id` DESC";
 	$trackingList = $base->list_result($query);
 
-
+	$query = "SELECT * FROM `category`";
+	$catagoryList = $base->list_result($query);
+	mysql_close($con);
+	
 }catch (Exception $e){
 	echo 'Exception: ',  $e->getMessage(), "\n";
 }
 
-
+$smarty->assign('catagoryList',$catagoryList);
 $smarty->assign('trackingList',$trackingList);
 $smarty->display('PurchaseTracking.html');
 ?>

@@ -150,7 +150,7 @@ a { cursor:pointer;}
     </div>
     <div class="panel panel-info">
         <div style="font-weight:bold; text-align:right;" class="panel-heading">     
-            <span>Total Cost: ${if $totalprice}{$totalprice}{else}0.00{/if}</span>
+            <span>Total Amount: ${if $totalprice}{$totalprice}{else}0.00{/if}</span>
         </div>
         <div class="panel-body">
             <table class="table table-hover" style="word-break: break-all;">
@@ -259,6 +259,12 @@ $('input[name=action]').hover(function(e){
 $('#pw').mouseleave(function(e){
 	$('#pw').css('display','none');
 });
+
+/*dropdown list*/
+$('#searchBar #categoryList ul li').click(function(){
+	$('#searchBar #categoryList button .text').text($(this).find('a').text());
+	$("#searchBar input[name='category']").val($(this).find('input').val());
+})
 
 /*img size*/
 $('img').each(function(index, element) {

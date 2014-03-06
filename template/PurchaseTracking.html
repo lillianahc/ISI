@@ -147,9 +147,9 @@ a { cursor:pointer;}
                     <tr>
                         <th width="12%">Order No.</th>
                         <th width="18%">Status</th>
-                        <th width="25%">Purchase date</th>
-                        <th width="25%">Shipment date</th>
-                        <th width="20%">Total cost</th>
+                        <th width="23%">Purchase Date</th>
+                        <th width="23%">Shipment Date</th>
+                        <th width="24%">Total Order Amount</th>
                     </tr>
                 </thead>   
                 <tbody class="table-hover">
@@ -204,6 +204,12 @@ $('input[name=action]').hover(function(e){
 $('#pw').mouseleave(function(e){
 	$('#pw').css('display','none');
 });
+
+/*dropdown list*/
+$('#searchBar #categoryList ul li').click(function(){
+	$('#searchBar #categoryList button .text').text($(this).find('a').text());
+	$("#searchBar input[name='category']").val($(this).find('input').val());
+})
 
 /*go to productlist page*/
 $('#home').click(function(e){

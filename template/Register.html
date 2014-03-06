@@ -46,8 +46,8 @@ a { cursor:pointer;}
 #container { min-height: 600px; }
 #registerdiv { min-height: 600px; padding:20px 100px; }
 
-#step{ width:626px; height:34px; margin:0 auto; background:url(assets/images/step.png) no-repeat;}
-#step > div{ display:table-cell; height:34px; width:313px; color:#FFF; font-weight:bold; vertical-align:middle; text-align:center; }
+#step{ width:588px; height:42px; margin:0 auto; background:url(assets/images/step.jpg) no-repeat;}
+#step > div{ display:table-cell; height:40px; width:313px; font-weight:bold; vertical-align:middle; text-align:center; }
 	
 #register { width:600px; border-collapse:separate; border-spacing:5px 10px; margin:0 auto;}
 #register tr td:first-child {vertical-align:top; text-align:right;}
@@ -57,7 +57,7 @@ a { cursor:pointer;}
 .warning{ color:red; vertical-align:bottom; margin-left:5px;}
 
 /*------register complete------*/
-#complete{  width:600px; padding:10px 0 0 100px; display:none; }
+#complete{  width:600px; padding:10px 0 0 100px; }
  
 </style>
 {/literal}
@@ -136,9 +136,15 @@ a { cursor:pointer;}
 	<div style=" height:30px; background-color:#f6f6f6; border-bottom:3px solid #2e62ad; border-top:1px solid #f0f0f0;"></div>
     <div id="registerdiv">
 	<div id="step">
-    	<div>1. Personal Information</div>
-        <div style="color:#6FBEFF">2. Compelete</div>
+    {if $success}
+    	<div style="color:#999">1. Personal Information</div>
+        <div style="color:#06C">2. Complete</div>
+    {else}
+    	<div style="color:#06C">1. Personal Information</div>
+        <div style="color:#999">2. Complete</div>
+    {/if}
     </div>
+    {if !$success}
     <form id="registerForm" method="post">
     <div style="height:400px;">
     <table id="register">
@@ -173,22 +179,22 @@ a { cursor:pointer;}
         <tr>
             <td><span>*</span>Shipping Address:</td>
             <td><textarea name="shipAddress" class="form-control" rows="2">{$user_info['shipAddress']}</textarea></td>
-        </tr>  
+        </tr>
     </table>
     </div>
     <div style="width:600px; margin:0 auto; text-align:right; ">
+   		<span style="color:red; float:left; margin-left:30px; line-height:50px;">* Mandatory</span>
 		<button style="margin-right:15px" name="register" value="register" type="submit" class="btn btn-info">Submit</button>
 		<button name="reset" type="button" class="btn btn-default">Reset</button>
     </div>
     </form>
-{if $success}
-    <div id="complete">
-        <p>Register successful!</p>
-        <p>login ID: {$user_info['userName']}</p>
-        <p>password: {$user_info['password']}</p>
-        <p>Thank you for registration.</p>
-    </div>
-{/if}
+	{else}
+        <div id="complete">
+            <p>Register successful!</p>
+            <p>login ID: {$session['account_name']}</p>
+            <p>Thank you for registration.</p>
+        </div>
+	{/if}
 	</div>
 </div>
 
@@ -197,16 +203,6 @@ a { cursor:pointer;}
     	<p>Copyright © 2014 Bookstore Inc. All rights reserved</p>
     </div>
 </div>
-
-{if $success}
-<script language="javascript">
-		$('#step').css('background-position','0px -34px');
-		$('#step div').eq(0).css('color','#6FBEFF');	
-		$('#step div').eq(1).css('color','#FFF');
-		$('#registerForm').css('display','none');
-		$('#complete').css('display','block');
-</script>
-{/if}
 
 
 {literal} 
@@ -225,6 +221,12 @@ $('input[name=action]').hover(function(e){
 $('#pw').mouseleave(function(e){
 	$('#pw').css('display','none');
 });
+
+/*dropdown list*/
+$('#searchBar #categoryList ul li').click(function(){
+	$('#searchBar #categoryList button .text').text($(this).find('a').text());
+	$("#searchBar input[name='category']").val($(this).find('input').val());
+})
 
 /*checking*/
 var register_info = {

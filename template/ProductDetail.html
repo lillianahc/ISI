@@ -42,6 +42,7 @@ a { cursor:pointer;}
 
 .vendor { display:none;}
 
+.warning { color:red;}
 /*-----------product detail------------*/
 #container { min-height: 760px; padding-bottom:30px;}
 #searchBackground{ border-bottom:1px solid #CCC}
@@ -211,10 +212,11 @@ a { cursor:pointer;}
                 	<td></td>
                     <td style="margin-top:15px;">
                    		<div id="editpro">
-                        	 <input name="edit" type="button" class="btn btn-warning" value="Edit" style="width:100px;">
+                        	 <input name="edit" type="button" class="btn btn-warning" value="Edit" style="width:90px;">
                         </div>
                         <div id="confirmpro">
-                       		 <input name="confirmEdit" type="submit" class="btn btn-success" value="Submit" style="width:100px;">
+                       		 <input name="confirmEdit" type="submit" class="btn btn-success" value="Submit" style="width:90px;">
+                             <input name="backedit" type="button" class="btn btn-default" value="Undo" style="width:70px; margin-left:10px;">
                         </div>
                    </td>
                 </tr>  
@@ -302,7 +304,7 @@ a { cursor:pointer;}
                             <input name="ReleaseDate" type="text" class="form-control vendor" value="{$productDetailList['releaseDate']}">
                          </td>
                          
-                    	 <td class="customer">
+                    	 <td id="language" class="customer">
                             <span class="bold">Language:</span>
                             <span class="customer">{$productDetailList['language']}</span>
                          </td>
@@ -353,14 +355,47 @@ a { cursor:pointer;}
 </div>
 
 
+
 {if ($session['user_id']==1)}
 <script language="javascript">
-
+$('#searchBar .row .col-lg-6').css('width', '580px');
+$('#searchBar .vendor').css('display', 'block');
+	
 $('input[name=edit]').click(function(){
-	$('.vendor').css('display', 'block');
-	$('.customer').css('display', 'none');
-	$('#editpro').css('display','none');
-	$('#confirmpro').css('display', 'block');
+	$('#container .vendor').css('display', 'block');
+	$('#container .customer').css('display', 'none');
+	$('#container #editpro').css('display','none');
+	$('#container #confirmpro').css('display', 'block');
+})
+
+$('input[name=backedit]').click(function(){
+	$('#container .vendor').css('display', 'none');
+	$('#container .customer').css('display', 'block');
+	$('#container span.customer').css('display', 'inline');
+	$('#container #editpro').css('display','block');
+	$('#container #confirmpro').css('display', 'none');
+	
+	/*undo*/
+	$('#container tr td').each(function(index, element) {
+		$(element).find('input.vendor').val($(element).find('span.customer').text());
+		$(element).find('textarea.vendor').val($(element).find('p.customer').text()); 
+	});
+	$('#product_info table tr').find('textarea').val($('#product_info table tr:first-child').find('td.customer').text());
+	$('#product_info #categoryList button .text').text($('#product_info table tr').eq(1).find('.customer').text());
+	$('#product_info #categoryList ul li').each(function(index, element) {
+		if ($('#product_info #categoryList button .text').text()==$(element).find('a').text()){
+			$('#product_info #categoryList input[name=category]').val($(element).find('input').val());
+		}
+	});
+	$('#detail_info #languageList button .text').text($('#language span.customer').text());
+	$('#detail_info #languageList ul li').each(function(index, element) {
+		if ($('#detail_info #languageList button .text').text()==$(element).find('a').text()){
+			$('#detail_info #languageList input[name=language]').val($(element).find('input').val());
+		}
+	});
+
+	$("input").blur();
+	$("textarea").blur();
 })
 
 /*submit*/
@@ -408,15 +443,12 @@ $('img').each(function(index, element) {
 });
 
 /*picture group*/
-var clicke = 0;
 var bigpic = $('#big_pic').attr('src');
 $('.smallpic').click(function(e){
-	clicke = 1;
 	$('#big_pic').attr('src', $(this).find('img').attr('src'));
 	bigpic = $('#big_pic').attr('src');
 	$('.smallpic').removeClass('pic_focus');
 	$(this).addClass('pic_focus');
-	
 	if ($(this).find('img').width() <= $(this).find('img').height()){
 		$('#big_pic').css('width','auto');
 	}else{
@@ -433,17 +465,14 @@ $('.smallpic').hover(function(e){
 	}
 })
 $('#smallpic_group').mouseleave(function(e){
-	if(clicke !=1){
-		$('#big_pic').attr('src', bigpic);
-		
-		if ($(this).find('img').width() <= $(this).find('img').height()){
-			$('#big_pic').css('width','auto');
-		}else{
-			$('#big_pic').css('width','100%');
-		}
+	
+	$('#big_pic').attr('src', bigpic);
+	if ($(this).find('img').width() <= $(this).find('img').height()){
+		$('#big_pic').css('width','auto');
 	}else{
-		clicke = 0;
+		$('#big_pic').css('width','100%');
 	}
+
 })
 
 /*dropdown list*/
@@ -498,7 +527,6 @@ $('#product_info button[name=add]').click(function(e){
 /*checking*/
 var product_info = {
 	productName: 'Please enter product name',
-	price: 'Please enter price',
 	image: 'Please upload at least one image',
 	publisher: 'Please enter publisher',
 	city: 'Please enter publisher city',
@@ -522,23 +550,6 @@ $("input").blur(function(e){
 	}
 });
 
-$("input[name='price']").blur(function(e){
-	if ($.trim($("input[name='price']").val()) != "" ){
-		$("input[name='price']+span").remove();	
-		var num = /^\d{1,}(\.\d{1,2})?$/;	
-		if (!num.test($.trim($("input[name='price']").val()))){
-			$(this).after("<span class='warning'>Invalid number format.</span>");			
-		}else{
-			var num1 = /^\d{1,}$/;	
-			if (num1.test($.trim($("input[name='price']").val())))
-				$(this).val($(this).val()+'.00');	
-			var num2 = /^\d{1,}(\.\d{1})$/;	
-			if (num2.test($.trim($("input[name='price']").val())))
-				$(this).val($(this).val()+'.0');
-		}
-	}
-});
-
 $("input[name='ISBN']").blur(function(e){
 	if ($.trim($("input[name='ISBN']").val()) != "" ){
 		$("input[name='ISBN']+span").remove();	
@@ -554,12 +565,13 @@ $("input[name='ISBN']").blur(function(e){
 $("input[name='ReleaseDate']").blur(function(e){
 	if ($.trim($("input[name='ReleaseDate']").val()) != "" ){
 		$("input[name='ReleaseDate']+span").remove();	
-		var date = /^\d{4}\-[01]?[0-2]\-([0-2]?[0-9]|[3][01])$/;	
+		var date = /^([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-9])))$/;	
 		if (!date.test($.trim($("input[name='ReleaseDate']").val()))){
 			$(this).after("<span class='warning'>Invalid date format.</span>");			
 		}
 	}
 });
+
 
 $("input[name='pages']").blur(function(e){
 	if ($.trim($("input[name='pages']").val()) != "" ){
@@ -567,6 +579,12 @@ $("input[name='pages']").blur(function(e){
 		var num = /^\d{0,5}$/;	
 		if (!num.test($.trim($("input[name='pages']").val()))){
 			$(this).after("<span class='warning'>Invalid number format.</span>");			
+		}else{
+			$(this).val(parseInt($.trim($(this).val())));
+			if ($(this).val()<=0){
+				$(this).after("<span class='warning'>Pages cannot be zero.</span>");	
+			}
+		
 		}
 	}
 });
