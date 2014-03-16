@@ -45,23 +45,21 @@ try {
 	
 	if($_GET['order_id']){
 		$order_id = mysql_real_escape_string( trim($_GET['order_id']));
-
+		if (!is_numeric($order_id)) {
+			orderid_fail();
+		}
+		
 		if($_SESSION['user_id'] == 1){
 			$query = "SELECT * FROM `order` WHERE `status` IN ('pending', 'hold') AND `order_id`=$order_id";
-			$orderinfo = $base->get($query);
-			if(!$orderinfo){
-				header("Location: PendingOrders.php", true, 200);
-				exit;
-			}		
 		}else{
 			$query = "SELECT * FROM `order` WHERE `status` IN ('pending', 'shipped', 'hold') AND `order_id`=$order_id";
-			$orderinfo = $base->get($query);
-			if(!$orderinfo){
-				header("Location: PurchaseTracking.php", true, 200);
-				exit;
-			}
 		}
-
+		
+		$orderinfo = $base->get($query);
+		if(!$orderinfo){
+			orderid_fail();
+		}
+		
 		$query = "SELECT * FROM `category`";
 		$catagoryList = $base->list_result($query);
 		
@@ -82,6 +80,8 @@ try {
 		}else{
 			$userinfo = $_SESSION;
 		}
+	}else{
+		orderid_fail();
 	}
 	mysql_close($con);
 	
@@ -89,6 +89,14 @@ try {
 	echo 'Exception: ',  $e->getMessage(), "\n";
 }
 
+function orderid_fail() {
+	if($_SESSION['user_id'] == 1){
+		header("Location: PendingOrders.php", true, 200);
+	}else{
+		header("Location: PurchaseTracking.php", true, 200);
+	}	
+	exit;
+}
 
 $smarty->assign('userinfo',$userinfo);
 $smarty->assign('orderinfo',$orderinfo);

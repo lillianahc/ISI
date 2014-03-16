@@ -8,19 +8,26 @@ try {
 	if( $_POST['addCart'] ){
 		$bookID = mysql_real_escape_string( trim($_POST['book_id']));
 		$qty = mysql_real_escape_string( trim($_POST['quantity']));
-
-		$query = "SELECT * FROM `shopping_cart` WHERE `user_id`=$_SESSION[user_id] AND `book_id`=$bookID";
-		$row = $base->get($query);
-		if ($row){
-			$qty = $row['qty'] + $qty;
-			$query = "UPDATE `shopping_cart` SET `qty`=$qty WHERE `user_id`=$_SESSION[user_id] AND `book_id`=$bookID";
-		}else{
-			$query = "INSERT INTO `shopping_cart`(`user_id`, `book_id`, `qty`) 
-					VALUES ($_SESSION[user_id], $bookID, $qty)";
-		}
-		$row = $base->query($query);
-		if ($row){
-			$success = "Product successfully added to cart";
+		if (is_numeric($qty)) {
+			if ($qty>99){
+				$qty=99;
+			}elseif ($qty<1){
+				$qty=1;
+			};
+			
+			$query = "SELECT * FROM `shopping_cart` WHERE `user_id`=$_SESSION[user_id] AND `book_id`=$bookID";
+			$row = $base->get($query);
+			if ($row){
+				$qty = $row['qty'] + $qty;
+				$query = "UPDATE `shopping_cart` SET `qty`=$qty WHERE `user_id`=$_SESSION[user_id] AND `book_id`=$bookID";
+			}else{
+				$query = "INSERT INTO `shopping_cart`(`user_id`, `book_id`, `qty`) 
+						VALUES ($_SESSION[user_id], $bookID, $qty)";
+			}
+			$row = $base->query($query);
+			if ($row){
+				$success = "Product successfully added to cart";
+			}
 		}
 	}
 	
@@ -70,7 +77,10 @@ try {
 	
 	if ($_GET['book_id']){
 		$book_id = mysql_real_escape_string( trim($_GET['book_id']));
-	
+		if (!is_numeric($book_id)) {
+			bookid_fail();
+		}
+		
 		$query = "SELECT b.`book_id`, b.`book_name`, b.`category_id`, b.`language_id`, b.`price`, b.`pages`, b.`releaseDate`, b.`ISBN`
 				, b.`description`, c.`name` AS `category`, p.`name` AS `publisher`, p.`city`, a.`name` AS `authors`, l.`name` AS 'language' 
 				FROM `book` b INNER JOIN `category` c ON b.`category_id` = c.`category_id`
@@ -80,7 +90,7 @@ try {
 		$productDetailList = $base->get($query);
 	
 		if (!$productDetailList){
-			$error = "No result found.";
+			bookid_fail();
 		}
 		$query = "SELECT * FROM `book_image` bi NATURAL JOIN `image` i WHERE `book_id`=$book_id";
 		$imageList = $base->list_result($query);
@@ -90,6 +100,8 @@ try {
 
 		$query = "SELECT * FROM `language`";
 		$languageList = $base->list_result($query);
+	}else{
+		bookid_fail();
 	}
 	
 	mysql_close($con);
@@ -98,9 +110,12 @@ try {
 	echo 'Exception: ',  $e->getMessage(), "\n";
 }
 
+function bookid_fail() {
+	header("Location: ProductList.php", true, 200);
+	exit;
+}
 
 $smarty->assign('success',$success);
-$smarty->assign('error',$error);
 $smarty->assign('languageList',$languageList);
 $smarty->assign('catagoryList',$catagoryList);
 $smarty->assign('imageList',$imageList);
